@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L91T00TK4K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L91T00TK4K');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGL - Setup</title>
+    <style>
+        :root { --primary: #3b82f6; --primary-hover: #2563eb; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        .watermark-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.03; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; padding: 20px; user-select: none; }
+        .watermark-text { font-size: 5rem; font-weight: 900; letter-spacing: 10px; transform: rotate(-15deg); margin: 40px; }
+        .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px; z-index: 2; }
+        .setup-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; padding: 35px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 8px; color: #fff; }
+        .header p { color: var(--text-muted); font-size: 0.95rem; }
+        .user-badge { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); color: var(--primary); padding: 6px 12px; border-radius: 20px; display: inline-block; font-size: 0.85rem; margin-top: 10px; direction: ltr; }
+        .form-group { margin-bottom: 22px; position: relative; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; }
+        .custom-select-wrapper { position: relative; }
+        .select-trigger { background: #0f172a; border: 1px solid var(--border); padding: 12px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: border 0.3s; }
+        .select-trigger:hover { border-color: var(--primary); }
+        .select-trigger .selected-value { display: flex; align-items: center; gap: 10px; }
+        .select-trigger::after { content: '▼'; font-size: 0.8rem; color: var(--text-muted); transition: transform 0.3s; }
+        .custom-select-wrapper.open .select-trigger::after { transform: rotate(180deg); }
+        .dropdown-menu { position: absolute; top: 100%; left: 0; right: 0; background: #1e293b; border: 1px solid var(--border); border-radius: 8px; margin-top: 5px; max-height: 250px; overflow-y: auto; z-index: 10; display: none; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        .custom-select-wrapper.open .dropdown-menu { display: block; }
+        .search-box { padding: 8px; position: sticky; top: 0; background: #1e293b; border-bottom: 1px solid var(--border); z-index: 2; }
+        .search-box input { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #fff; outline: none; }
+        .dropdown-options { padding: 5px 0; }
+        .option { padding: 10px 15px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
+        .option:hover { background: rgba(255, 255, 255, 0.05); }
+        .flag-icon { width: 20px; height: 15px; object-fit: cover; border-radius: 2px; }
+        .unit-toggle-group { display: flex; background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 4px; }
+        .unit-btn { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 12px; cursor: pointer; border-radius: 6px; font-weight: 600; font-size: 1rem; transition: all 0.3s; }
+        .unit-btn.active { background: var(--primary); color: #fff; }
+        .btn-start { width: 100%; background: var(--primary); color: #fff; border: none; padding: 16px; border-radius: 8px; font-size: 1.2rem; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 15px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .btn-start:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        footer { background-color: #000000; color: #94a3b8; text-align: center; padding: 15px 20px; font-size: 0.9rem; border-top: 1px solid #111; z-index: 2; }
+        .footer-nav { display: flex; justify-content: center; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+        .footer-link { display: inline-block; padding: 10px 16px; border-radius: 8px; text-decoration: none; background: #0f172a; border: 1px solid var(--border); color: var(--text-main); transition: 0.3s; }
+        .footer-link:hover { border-color: var(--primary); color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="watermark-bg">
+        <div class="watermark-text">SIGNAL</div><div class="watermark-text">SIGNAL</div><div class="watermark-text">SIGNAL</div>
+    </div>
+    <div class="main-container">
+        <div class="setup-card">
+            <div class="header">
+                <h1 id="tr-title">إعداد التفضيلات والموقع</h1>
+                <p id="tr-desc">قم بتخصيص تجربتك الخاصة في تطبيق SIGNAL</p>
+                <div id="userBadge" class="user-badge">guest@signal.com</div>
+            </div>
+            <div class="form-group">
+                <label id="tr-lang-label">لغة التطبيق المفضلّة</label>
+                <div class="custom-select-wrapper" id="langSelectWrapper">
+                    <div class="select-trigger" onclick="toggleDropdown('langSelectWrapper')">
+                        <div class="selected-value" id="selectedLang">اختر اللغة...</div>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="search-box"><input type="text" id="tr-lang-search" placeholder="ابحث عن لغة..." oninput="filterOptions('langSelectWrapper', this.value)"></div>
+                        <div class="dropdown-options" id="langOptions"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label id="tr-country-label">الدولة</label>
+                <div class="custom-select-wrapper" id="countrySelectWrapper">
+                    <div class="select-trigger" onclick="toggleDropdown('countrySelectWrapper')">
+                        <div class="selected-value" id="selectedCountry">اختر الدولة...</div>
+                    </div>
+                    <div class="dropdown-menu">
+                        <div class="search-box"><input type="text" id="tr-country-search" placeholder="ابحث عن دولة..." oninput="filterOptions('countrySelectWrapper', this.value)"></div>
+                        <div class="dropdown-options" id="countryOptions"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label id="tr-unit-label">وحدة قياس درجات الحرارة</label>
+                <div class="unit-toggle-group">
+                    <button type="button" class="unit-btn active" id="unitC" onclick="setUnit('C')">مئوية C°</button>
+                    <button type="button" class="unit-btn" id="unitF" onclick="setUnit('F')">فهرنهايت F°</button>
+                </div>
+            </div>
+            <button class="btn-start" id="tr-btn-start" onclick="saveAndStart()">ابدأ الآن</button>
+            <div class="footer-nav">
+                <a href="index.html" class="footer-link" id="tr-back-login">العودة لتسجيل الدخول</a>
+            </div>
+        </div>
+    </div>
+    <footer id="tr-footer">جميع الحقوق محفوظة &copy;2026 المطور يحيى خيري</footer>
+    <script>
+        const translations = {
+            'ar': { title: 'إعداد التفضيلات والموقع', desc: 'قم بتخصيص تجربتك الخاصة في تطبيق SIGNAL', langLabel: 'لغة التطبيق المفضلّة', countryLabel: 'الدولة', unitLabel: 'وحدة قياس درجات الحرارة', btnStart: 'ابدأ الآن', backLogin: 'العودة لتسجيل الدخول', footer: 'جميع الحقوق محفوظة ©2026 المطور يحيى خيري', searchLang: 'ابحث عن لغة...', searchCountry: 'ابحث عن دولة...', selectLang: 'اختر اللغة...', selectCountry: 'اختر الدولة...', unitC: 'مئوية C°', unitF: 'فهرنهايت F°', alertSelect: 'الرجاء اختيار اللغة والدولة أولاً.' },
+            'en': { title: 'Preferences & Location Setup', desc: 'Customize your experience in SIGNAL app', langLabel: 'Preferred App Language', countryLabel: 'Country', unitLabel: 'Temperature Unit System', btnStart: 'Start Now', backLogin: 'Back to Login', footer: 'All Rights Reserved ©2026 Developer Yahia Khairy', searchLang: 'Search for language...', searchCountry: 'Search for country...', selectLang: 'Select Language...', selectCountry: 'Select Country...', unitC: 'Celsius C°', unitF: 'Fahrenheit F°', alertSelect: 'Please select language and country first.' }
+        };
+
+        const languages = [{ code: 'ar', name: 'العربية' }, { code: 'en', name: 'English' }, { code: 'fr', name: 'Français' }, { code: 'es', name: 'Español' }, { code: 'de', name: 'Deutsch' }, { code: 'it', name: 'Italiano' }, { code: 'tr', name: 'Türkçe' }, { code: 'ru', name: 'Русский' }, { code: 'zh', name: '中文' }, { code: 'ja', name: '日本語' }];
+        const countries = [
+            { code: 'EG', name: 'مصر', flag: 'https://flagcdn.com/w40/eg.png' }, { code: 'SA', name: 'المملكة العربية السعودية', flag: 'https://flagcdn.com/w40/sa.png' },
+            { code: 'AE', name: 'الإمارات العربية المتحدة', flag: 'https://flagcdn.com/w40/ae.png' }, { code: 'JO', name: 'الأردن', flag: 'https://flagcdn.com/w40/jo.png' },
+            { code: 'MA', name: 'المغرب', flag: 'https://flagcdn.com/w40/ma.png' }, { code: 'DZ', name: 'الجزائر', flag: 'https://flagcdn.com/w40/dz.png' },
+            { code: 'KW', name: 'الكويت', flag: 'https://flagcdn.com/w40/kw.png' }, { code: 'QA', name: 'قطر', flag: 'https://flagcdn.com/w40/qa.png' },
+            { code: 'US', name: 'الولايات المتحدة الأمريكية', flag: 'https://flagcdn.com/w40/us.png' }, { code: 'GB', name: 'المملكة المتحدة', flag: 'https://flagcdn.com/w40/gb.png' },
+            { code: 'FR', name: 'فرنسا', flag: 'https://flagcdn.com/w40/fr.png' }, { code: 'DE', name: 'ألمانيا', flag: 'https://flagcdn.com/w40/de.png' },
+            { code: 'CN', name: 'الصين', flag: 'https://flagcdn.com/w40/cn.png' }, { code: 'JP', name: 'اليابان', flag: 'https://flagcdn.com/w40/jp.png' }
+        ];
+
+        let selectedLanguageValue = null, selectedCountryValue = null, selectedUnitValue = 'C', currentUserEmail = '';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const session = localStorage.getItem('sgl_current_session');
+            if (!session) { window.location.href = 'index.html'; return; }
+            currentUserEmail = session;
+            document.getElementById('userBadge').innerText = currentUserEmail;
+            renderLanguages(); renderCountries();
+            const savedSettings = localStorage.getItem(`sgl_settings_${currentUserEmail}`);
+            if (savedSettings) {
+                const s = JSON.parse(savedSettings);
+                if (s.language) selectLang(s.language.code, s.language.name);
+                if (s.country) selectCountry(s.country.code, s.country.name, s.country.flag);
+                if (s.unit) setUnit(s.unit);
+            }
+        });
+
+        function applyTranslation(langCode) {
+            const t = translations[langCode] || translations['en'];
+            document.getElementById('tr-title').innerText = t.title;
+            document.getElementById('tr-desc').innerText = t.desc;
+            document.getElementById('tr-lang-label').innerText = t.langLabel;
+            document.getElementById('tr-country-label').innerText = t.countryLabel;
+            document.getElementById('tr-unit-label').innerText = t.unitLabel;
+            document.getElementById('tr-btn-start').innerText = t.btnStart;
+            document.getElementById('tr-back-login').innerText = t.backLogin;
+            document.getElementById('tr-footer').innerText = t.footer;
+            document.getElementById('tr-lang-search').placeholder = t.searchLang;
+            document.getElementById('tr-country-search').placeholder = t.searchCountry;
+            document.getElementById('unitC').innerText = t.unitC;
+            document.getElementById('unitF').innerText = t.unitF;
+            document.dir = langCode === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        function toggleDropdown(id) {
+            const w = document.getElementById(id);
+            const isOpen = w.classList.contains('open');
+            document.querySelectorAll('.custom-select-wrapper').forEach(el => el.classList.remove('open'));
+            if (!isOpen) w.classList.add('open');
+        }
+
+        function renderLanguages() {
+            document.getElementById('langOptions').innerHTML = languages.map(l => `<div class="option" onclick="selectLang('${l.code}', '${l.name}')"><span>${l.name}</span></div>`).join('');
+        }
+
+        function renderCountries() {
+            document.getElementById('countryOptions').innerHTML = countries.map(c => `<div class="option" data-name="${c.name}" onclick="selectCountry('${c.code}', '${c.name}', '${c.flag}')"><img src="${c.flag}" class="flag-icon"><span>${c.name}</span></div>`).join('');
+        }
+
+        function filterOptions(id, q) {
+            document.getElementById(id).querySelectorAll('.option').forEach(o => {
+                const n = o.innerText.toLowerCase();
+                o.style.display = n.includes(q.toLowerCase()) ? 'flex' : 'none';
+            });
+        }
+
+        function selectLang(code, name) {
+            selectedLanguageValue = { code, name };
+            document.getElementById('selectedLang').innerText = name;
+            document.getElementById('langSelectWrapper').classList.remove('open');
+            applyTranslation(code);
+        }
+
+        function selectCountry(code, name, flag) {
+            selectedCountryValue = { code, name, flag };
+            document.getElementById('selectedCountry').innerHTML = `<img src="${flag}" class="flag-icon"> <span>${name}</span>`;
+            document.getElementById('countrySelectWrapper').classList.remove('open');
+        }
+
+        function setUnit(u) {
+            selectedUnitValue = u;
+            document.getElementById('unitC').classList.toggle('active', u === 'C');
+            document.getElementById('unitF').classList.toggle('active', u === 'F');
+        }
+
+        function saveAndStart() {
+            if (!selectedLanguageValue || !selectedCountryValue) {
+                const t = translations[selectedLanguageValue?.code] || translations['en'];
+                alert(t.alertSelect); return;
+            }
+            const settings = { language: selectedLanguageValue, country: selectedCountryValue, unit: selectedUnitValue };
+            localStorage.setItem(`sgl_settings_${currentUserEmail}`, JSON.stringify(settings));
+            window.location.href = 'weather.html';
+        }
+    </script>
+</body>
+</html>
