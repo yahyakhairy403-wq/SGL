@@ -262,21 +262,189 @@
         let isCompareMode = false, splitWeatherData = { 1: null, 2: null };
 
         const translations = {
-    'ar': { sideTitle: 'تخصيص النطاق الجغرافي', countryLabel: 'اختر الدولة:', welcome: 'مرحباً بك في نظام لوحة التحكم SIGNAL.', welcomeSub: 'الرجاء اختيار المنطقة لعرض التقرير.', humidity: 'نسبة الرطوبة', wind: 'سرعة الرياح', visibility: 'الرؤية', uv: 'الأشعة UV', forecast: 'التوقعات المستقبلية', backSetup: '⬅ العودة للإعدادات', logout: 'تسجيل الخروج', alertOn: '🔔 التنبيهات نشطة', alertOff: '🔔 تنبيه الإشارات والتقلبات', userPrefix: 'المستخدم النشط: ', updatePrefix: 'آخر تحديث: ', windUnit: ' كم/س', visUnit: ' كم' },
+    'ar': { 
+        sideTitle: 'تخصيص النطاق الجغرافي', 
+        countryLabel: 'اختر الدولة:', 
+        cityLabel: 'اختر المدينة:', // << جديد
+        welcome: 'مرحباً بك في نظام لوحة التحكم SIGNAL.', 
+        welcomeSub: 'الرجاء اختيار المنطقة لعرض التقرير.', 
+        humidity: 'نسبة الرطوبة', 
+        wind: 'سرعة الرياح', 
+        visibility: 'الرؤية', 
+        uv: 'الأشعة UV', 
+        forecast: 'التوقعات المستقبلية', 
+        backSetup: '⬅ العودة للإعدادات', 
+        logout: 'تسجيل الخروج', 
+        alertBtn: '🔔 تنبيه الإشارات والتقلبات', // << جديد
+        compareBtn: '📊 تقسيم والمقارنة', // << جديد
+        alertOn: '🔔 التنبيهات نشطة', 
+        alertOff: '🔔 تنبيه الإشارات والتقلبات', 
+        userPrefix: 'المستخدم النشط: ', 
+        updatePrefix: 'آخر تحديث: ', 
+        windUnit: ' كم/س', 
+        visUnit: ' كم' 
+    },
     
-    'en': { sideTitle: 'Location Customization', countryLabel: 'Select Country:', welcome: 'Welcome to SIGNAL Dashboard System.', welcomeSub: 'Please select a region to view the report.', humidity: 'Humidity', wind: 'Wind Speed', visibility: 'Visibility', uv: 'UV Index', forecast: 'Future Forecast', backSetup: '⬅ Back to Settings', logout: 'Secure Logout', alertOn: '🔔 Alerts Active', alertOff: '🔔 Weather Alerts', userPrefix: 'Active User: ', updatePrefix: 'Last Update: ', windUnit: ' kph', visUnit: ' km' },
+    'en': { 
+        sideTitle: 'Location Customization', 
+        countryLabel: 'Select Country:', 
+        cityLabel: 'Select City:', // << جديد
+        welcome: 'Welcome to SIGNAL Dashboard System.', 
+        welcomeSub: 'Please select a region to view the report.', 
+        humidity: 'Humidity', 
+        wind: 'Wind Speed', 
+        visibility: 'Visibility', 
+        uv: 'UV Index', 
+        forecast: 'Future Forecast', 
+        backSetup: '⬅ Back to Settings', 
+        logout: 'Secure Logout', 
+        alertBtn: '🔔 Weather Alerts', // << جديد
+        compareBtn: '📊 Split & Compare', // << جديد
+        alertOn: '🔔 Alerts Active', 
+        alertOff: '🔔 Weather Alerts', 
+        userPrefix: 'Active User: ', 
+        updatePrefix: 'Last Update: ', 
+        windUnit: ' kph', 
+        visUnit: ' km' 
+    },
     
-    'fr': { sideTitle: 'Personnalisation de la localisation', countryLabel: 'Sélectionner un pays:', welcome: 'Bienvenue sur le système SIGNAL.', welcomeSub: 'Veuillez sélectionner une région pour afficher le rapport.', humidity: 'Humidité', wind: 'Vitesse du vent', visibility: 'Visibilité', uv: 'Indice UV', forecast: 'Prévisions futures', backSetup: '⬅ Retour aux paramètres', logout: 'Déconnexion', alertOn: '🔔 Alertes actives', alertOff: '🔔 Alertes météo', userPrefix: 'Utilisateur actif: ', updatePrefix: 'Dernière mise à jour: ', windUnit: ' km/h', visUnit: ' km' },
+    'fr': { 
+        sideTitle: 'Personnalisation de la localisation', 
+        countryLabel: 'Sélectionner un pays:', 
+        cityLabel: 'Sélectionner une ville:', // << جديد
+        welcome: 'Bienvenue sur le système SIGNAL.', 
+        welcomeSub: 'Veuillez sélectionner une région pour afficher le rapport.', 
+        humidity: 'Humidité', 
+        wind: 'Vitesse du vent', 
+        visibility: 'Visibilité', 
+        uv: 'Indice UV', 
+        forecast: 'Prévisions futures', 
+        backSetup: '⬅ Retour aux paramètres', 
+        logout: 'Déconnexion', 
+        alertBtn: '🔔 Alertes Météo', // << جديد
+        compareBtn: '📊 Diviser & Comparer', // << جديد
+        alertOn: '🔔 Alertes actives', 
+        alertOff: '🔔 Alertes météo', 
+        userPrefix: 'Utilisateur actif: ', 
+        updatePrefix: 'Dernière mise à jour: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    },
     
-    'de': { sideTitle: 'Standortanpassung', countryLabel: 'Land auswählen:', welcome: 'Willkommen beim SIGNAL Dashboard System.', welcomeSub: 'Bitte wählen Sie eine Region, um den Bericht anzuzeigen.', humidity: 'Luftfeuchtigkeit', wind: 'Windgeschwindigkeit', visibility: 'Sichtweite', uv: 'UV-Index', forecast: 'Zukünftige Vorhersage', backSetup: '⬅ Zurück zu den Einstellungen', logout: 'Abmelden', alertOn: '🔔 Warnungen aktiv', alertOff: '🔔 Wetterwarnungen', userPrefix: 'Aktiver Benutzer: ', updatePrefix: 'Letztes Update: ', windUnit: ' km/h', visUnit: ' km' },
+    'de': { 
+        sideTitle: 'Standortanpassung', 
+        countryLabel: 'Land auswählen:', 
+        cityLabel: 'Stadt auswählen:', // << جديد
+        welcome: 'Willkommen beim SIGNAL Dashboard System.', 
+        welcomeSub: 'Bitte wählen Sie eine Region, um den Bericht anzuzeigen.', 
+        humidity: 'Luftfeuchtigkeit', 
+        wind: 'Windgeschwindigkeit', 
+        visibility: 'Sichtweite', 
+        uv: 'UV-Index', 
+        forecast: 'Zukünftige Vorhersage', 
+        backSetup: '⬅ Zurück zu den Einstellungen', 
+        logout: 'Abmelden', 
+        alertBtn: '🔔 Wetterwarnungen', // << جديد
+        compareBtn: '📊 Aufteilen & Vergleichen', // << جديد
+        alertOn: '🔔 Warnungen aktiv', 
+        alertOff: '🔔 Wetterwarnungen', 
+        userPrefix: 'Aktiver Benutzer: ', 
+        updatePrefix: 'Letztes Update: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    },
     
-    'tr': { sideTitle: 'Konum Özelleştirme', countryLabel: 'Ülke Seçin:', welcome: 'SIGNAL Kontrol Paneli Sistemine Hoş Geldiniz.', welcomeSub: 'Raporu görüntülemek için bir bölge seçin.', humidity: 'Nem', wind: 'Rüzgar Hızı', visibility: 'Görüş Mesafesi', uv: 'UV İndeksi', forecast: 'Gelecek Tahmin', backSetup: '⬅ Ayarlara Geri Dön', logout: 'Çıkış Yap', alertOn: '🔔 Uyarılar Aktif', alertOff: '🔔 Hava Durumu Uyarıları', userPrefix: 'Aktif Kullanıcı: ', updatePrefix: 'Son Güncelleme: ', windUnit: ' km/s', visUnit: ' km' },
+    'tr': { 
+        sideTitle: 'Konum Özelleştirme', 
+        countryLabel: 'Ülke Seçin:', 
+        cityLabel: 'Şehir Seçin:', // << جديد
+        welcome: 'SIGNAL Kontrol Paneli Sistemine Hoş Geldiniz.', 
+        welcomeSub: 'Raporu görüntülemek için bir bölge seçin.', 
+        humidity: 'Nem', 
+        wind: 'Rüzgar Hızı', 
+        visibility: 'Görüş Mesafesi', 
+        uv: 'UV İndeksi', 
+        forecast: 'Gelecek Tahmin', 
+        backSetup: '⬅ Ayarlara Geri Dön', 
+        logout: 'Çıkış Yap', 
+        alertBtn: '🔔 Hava Uyarıları', // << جديد
+        compareBtn: '📊 Böl ve Karşılaştır', // << جديد
+        alertOn: '🔔 Uyarılar Aktif', 
+        alertOff: '🔔 Hava Durumu Uyarıları', 
+        userPrefix: 'Aktif Kullanıcı: ', 
+        updatePrefix: 'Son Güncelleme: ', 
+        windUnit: ' km/s', 
+        visUnit: ' km' 
+    },
     
-    'es': { sideTitle: 'Personalización de ubicación', countryLabel: 'Seleccionar país:', welcome: 'Bienvenido al Sistema de Panel SIGNAL.', welcomeSub: 'Seleccione una región para ver el informe.', humidity: 'Humedad', wind: 'Velocidad del viento', visibility: 'Visibilidad', uv: 'Índice UV', forecast: 'Pronóstico futuro', backSetup: '⬅ Volver a Configuración', logout: 'Cerrar sesión', alertOn: '🔔 Alertas activas', alertOff: '🔔 Alertas meteorológicas', userPrefix: 'Usuario activo: ', updatePrefix: 'Última actualización: ', windUnit: ' km/h', visUnit: ' km' },
+    'es': { 
+        sideTitle: 'Personalización de ubicación', 
+        countryLabel: 'Seleccionar país:', 
+        cityLabel: 'Seleccionar ciudad:', // << جديد
+        welcome: 'Bienvenido al Sistema de Panel SIGNAL.', 
+        welcomeSub: 'Seleccione una región para ver el informe.', 
+        humidity: 'Humedad', 
+        wind: 'Velocidad del viento', 
+        visibility: 'Visibilidad', 
+        uv: 'Índice UV', 
+        forecast: 'Pronóstico futuro', 
+        backSetup: '⬅ Volver a Configuración', 
+        logout: 'Cerrar sesión', 
+        alertBtn: '🔔 Alertas del Tiempo', // << جديد
+        compareBtn: '📊 Dividir y Comparar', // << جديد
+        alertOn: '🔔 Alertas activas', 
+        alertOff: '🔔 Alertas meteorológicas', 
+        userPrefix: 'Usuario activo: ', 
+        updatePrefix: 'Última actualización: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    },
     
-    'zh': { sideTitle: '位置定制', countryLabel: '选择国家:', welcome: '欢迎使用 SIGNAL 仪表板系统。', welcomeSub: '请选择一个区域以查看报告。', humidity: '湿度', wind: '风速', visibility: '能见度', uv: '紫外线指数', forecast: '未来预报', backSetup: '⬅ 返回设置', logout: '安全退出', alertOn: '🔔 警报已激活', alertOff: '🔔 天气警报', userPrefix: '活动用户: ', updatePrefix: '最后更新: ', windUnit: ' 公里/小时', visUnit: ' 公里' },
+    'zh': { 
+        sideTitle: '位置定制', 
+        countryLabel: '选择国家:', 
+        cityLabel: '选择城市:', // << جديد
+        welcome: '欢迎使用 SIGNAL 仪表板系统。', 
+        welcomeSub: '请选择一个区域以查看报告。', 
+        humidity: '湿度', 
+        wind: '风速', 
+        visibility: '能见度', 
+        uv: '紫外线指数', 
+        forecast: '未来预报', 
+        backSetup: '⬅ 返回设置', 
+        logout: '安全退出', 
+        alertBtn: '🔔 警报通知', // << جديد
+        compareBtn: '📊 拆分和比较', // << جديد
+        alertOn: '🔔 警报已激活', 
+        alertOff: '🔔 天气警报', 
+        userPrefix: '活动用户: ', 
+        updatePrefix: '最后更新: ', 
+        windUnit: ' 公里/小时', 
+        visUnit: ' 公里' 
+    },
     
-    'ja': { sideTitle: 'ロケーションのカスタマイズ', countryLabel: '国を選択:', welcome: 'SIGNAL ダッシュボードシステムへようこそ。', welcomeSub: 'レポートを表示する地域を選択してください。', humidity: '湿度', wind: '風速', visibility: '視程', uv: 'UV指数', forecast: '今後の予報', backSetup: '⬅ 設定に戻る', logout: 'ログアウト', alertOn: '🔔 アラートが有効です', alertOff: '🔔 天気アラート', userPrefix: 'アクティブユーザー: ', updatePrefix: '最終更新: ', windUnit: ' km/h', visUnit: ' km' }
+    'ja': { 
+        sideTitle: 'ロケーションのカスタマイズ', 
+        countryLabel: '国を選択:', 
+        cityLabel: '都市を選択:', // << جديد
+        welcome: 'SIGNAL ダッシュボードシステムへようこそ。', 
+        welcomeSub: 'レポートを表示する地域を表示してください。', 
+        humidity: '湿度', 
+        wind: '風速', 
+        visibility: '視程', 
+        uv: 'UV指数', 
+        forecast: '今後の予報', 
+        backSetup: '⬅ 設定に戻る', 
+        logout: 'ログアウト', 
+        alertBtn: '🔔 アラート通知', // << جديد
+        compareBtn: '📊 分割と比較', // << جديد
+        alertOn: '🔔 アラートが有効です', 
+        alertOff: '🔔 天気アラート', 
+        userPrefix: 'アクティブユーザー: ', 
+        updatePrefix: '最終更新: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    }
 };
 
         const countryNamesDatabase = {
