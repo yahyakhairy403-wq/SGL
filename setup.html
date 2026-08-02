@@ -90,8 +90,7 @@
             <div class="form-group">
                 <label id="tr-unit-label">وحدة قياس درجات الحرارة</label>
                 <div class="unit-toggle-group">
-                    <select id="langSelect"></select>
-   <select id="countrySelect"></select>
+                    
                     <button type="button" class="unit-btn active" id="unitC" onclick="setUnit('C')">مئوية C°</button>
                     <button type="button" class="unit-btn" id="unitF" onclick="setUnit('F')">فهرنهايت F°</button>
                 </div>
@@ -237,56 +236,7 @@ const translations = {
     { code: 'VE', name: 'فنزويلا', flag: 'https://flagcdn.com/w40/ve.png' },
     { code: 'AU', name: 'أستراليا', flag: 'https://flagcdn.com/w40/au.png' },
 ]; 
-        const langSelect = document.getElementById('langSelect');
-const countrySelect = document.getElementById('countrySelect');
-
-// 1. املى قائمة اللغات اول مرة
-function populateLanguages() {
-  languages.forEach(lang => {
-    const option = document.createElement('option');
-    option.value = lang.code;
-    option.textContent = lang.name;
-    langSelect.appendChild(option);
-  });
-}
-
-// 2. دالة تملى قائمة الدول حسب اللغة المختارة
-function populateCountries(langCode) {
-  countrySelect.innerHTML = ''; // فضي القديم
-
-  const countries = translations[langCode].countries;
-
-  // حط اول اختيار
-  const defaultOption = document.createElement('option');
-  defaultOption.value = '';
-  defaultOption.textContent = translations[langCode].selectCountry;
-  countrySelect.appendChild(defaultOption);
-
-  // املى الدول
-  countries.forEach(country => {
-    const option = document.createElement('option');
-    option.value = country.code;
-    option.textContent = country.name;
-    countrySelect.appendChild(option);
-  });
-}
-
-// 3. لما اللغة تتغير
-langSelect.addEventListener('change', (e) => {
-  const selectedLang = e.target.value;
-  populateCountries(selectedLang);
-
-  // غير باقي النصوص كمان
-  document.querySelector('h1').textContent = translations[selectedLang].title;
-  document.querySelector('p.desc').textContent = translations[selectedLang].desc;
-  document.querySelector('label[for="country"]').textContent = translations[selectedLang].countryLabel;
-});
-
-// 4. التشغيل اول مرة
-populateLanguages();
-populateCountries('ar'); // ابدأ بالعربي
-langSelect.value = 'ar';
-
+        
         let selectedLanguageValue = null, selectedCountryValue = null, selectedUnitValue = 'C', currentUserEmail = '';
 
         window.addEventListener('DOMContentLoaded', () => {
