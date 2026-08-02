@@ -103,13 +103,14 @@
             <div class="country-select-box">
                 <label style="font-size: 14px; color: #9ca3af;" id="tr-country-label">اختر الدولة:</label>
                 <select id="countrySelect" onchange="onCountryChange(this.value)">
-                    <option value="EG">🇪🇬 مصر</option><option value="SA">🇸🇦 المملكة العربية السعودية</option>
-                    <option value="AE">🇦🇪 الإمارات العربية المتحدة</option><option value="JO">🇯🇴 الأردن</option>
-                    <option value="MA">🇲🇦 المغرب</option><option value="DZ">🇩🇿 الجزائر</option>
-                    <option value="KW">🇰🇼 الكويت</option><option value="QA">🇶🇦 قطر</option>
-                    <option value="US">🇺🇸 الولايات المتحدة الأمريكية</option><option value="GB">🇬🇧 المملكة المتحدة</option>
-                    <option value="FR">🇫🇷 فرنسا</option><option value="DE">🇩🇪 ألمانيا</option>
-                    <option value="CN">🇨🇳 الصين</option><option value="JP">🇯🇵 اليابان</option>
+    <option value="EG">🇪🇬 مصر</option><option value="SA">🇸🇦 المملكة العربية السعودية</option>
+    <option value="AE">🇦🇪 الإمارات العربية المتحدة</option><option value="JO">🇯🇴 الأردن</option>
+    <option value="MA">🇲🇦 المغرب</option><option value="DZ">🇩🇿 الجزائر</option>
+    <option value="KW">🇰🇼 الكويت</option><option value="QA">🇶🇦 قطر</option>
+    <option value="US">🇺🇸 الولايات المتحدة الأمريكية</option><option value="GB">🇬🇧 المملكة المتحدة</option>
+    <option value="FR">🇫🇷 فرنسا</option><option value="DE">🇩🇪 ألمانيا</option>
+    <option value="TR">🇹🇷 تركيا</option><option value="ES">🇪🇸 اسبانيا</option>
+    <option value="CN">🇨🇳 الصين</option><option value="JP">🇯🇵 اليابان</option>
                 </select>
             </div>
             <div class="region-zone">
@@ -162,6 +163,7 @@
                                 <option value="US">🇺🇸 الولايات المتحدة الأمريكية</option><option value="GB">🇬🇧 المملكة المتحدة</option>
                                 <option value="FR">🇫🇷 فرنسا</option><option value="DE">🇩🇪 ألمانيا</option>
                                 <option value="CN">🇨🇳 الصين</option><option value="JP">🇯🇵 اليابان</option>
+                                <option value="TR">🇹🇷 تركيا</option><option value="ES">🇪🇸 إسبانيا</option>
                             </select>
                             <select id="splitRegion1" onchange="updateSplitWeather(1)"></select>
                         </div>
@@ -191,6 +193,7 @@
                                 <option value="US">🇺🇸 الولايات المتحدة الأمريكية</option><option value="GB">🇬🇧 المملكة المتحدة</option>
                                 <option value="FR">🇫🇷 فرنسا</option><option value="DE">🇩🇪 ألمانيا</option>
                                 <option value="CN">🇨🇳 الصين</option><option value="JP">🇯🇵 اليابان</option>
+                                <option value="TR">🇹🇷 تركيا</option><option value="ES">🇪🇸 إسبانيا</option>
                             </select>
                             <select id="splitRegion2" onchange="updateSplitWeather(2)"></select>
                         </div>
@@ -259,18 +262,41 @@
         let isCompareMode = false, splitWeatherData = { 1: null, 2: null };
 
         const translations = {
-            'ar': { sideTitle: 'تخصيص النطاق الجغرافي', countryLabel: 'اختر الدولة:', welcome: 'مرحباً بك في نظام لوحة التحكم SIGNAL.', welcomeSub: 'الرجاء اختيار المنطقة لعرض التقرير.', humidity: 'نسبة الرطوبة', wind: 'سرعة الرياح', visibility: 'الرؤية', uv: 'الأشعة UV', forecast: 'التوقعات المستقبلية', backSetup: '⬅ العودة للإعدادات', logout: 'تسجيل الخروج', alertOn: '🔔 التنبيهات نشطة', alertOff: '🔔 تنبيه الإشارات والتقلبات', userPrefix: 'المستخدم النشط: ', updatePrefix: 'آخر تحديث: ', windUnit: ' كم/س', visUnit: ' كم' },
-            'en': { sideTitle: 'Location Customization', countryLabel: 'Select Country:', welcome: 'Welcome to SIGNAL Dashboard System.', welcomeSub: 'Please select a region to view the report.', humidity: 'Humidity', wind: 'Wind Speed', visibility: 'Visibility', uv: 'UV Index', forecast: 'Future Forecast', backSetup: '⬅ Back to Settings', logout: 'Secure Logout', alertOn: '🔔 Alerts Active', alertOff: '🔔 Weather Alerts', userPrefix: 'Active User: ', updatePrefix: 'Last Update: ', windUnit: ' kph', visUnit: ' km' }
-        };
+    'ar': { sideTitle: 'تخصيص النطاق الجغرافي', countryLabel: 'اختر الدولة:', welcome: 'مرحباً بك في نظام لوحة التحكم SIGNAL.', welcomeSub: 'الرجاء اختيار المنطقة لعرض التقرير.', humidity: 'نسبة الرطوبة', wind: 'سرعة الرياح', visibility: 'الرؤية', uv: 'الأشعة UV', forecast: 'التوقعات المستقبلية', backSetup: '⬅ العودة للإعدادات', logout: 'تسجيل الخروج', alertOn: '🔔 التنبيهات نشطة', alertOff: '🔔 تنبيه الإشارات والتقلبات', userPrefix: 'المستخدم النشط: ', updatePrefix: 'آخر تحديث: ', windUnit: ' كم/س', visUnit: ' كم' },
+    
+    'en': { sideTitle: 'Location Customization', countryLabel: 'Select Country:', welcome: 'Welcome to SIGNAL Dashboard System.', welcomeSub: 'Please select a region to view the report.', humidity: 'Humidity', wind: 'Wind Speed', visibility: 'Visibility', uv: 'UV Index', forecast: 'Future Forecast', backSetup: '⬅ Back to Settings', logout: 'Secure Logout', alertOn: '🔔 Alerts Active', alertOff: '🔔 Weather Alerts', userPrefix: 'Active User: ', updatePrefix: 'Last Update: ', windUnit: ' kph', visUnit: ' km' },
+    
+    'fr': { sideTitle: 'Personnalisation de la localisation', countryLabel: 'Sélectionner un pays:', welcome: 'Bienvenue sur le système SIGNAL.', welcomeSub: 'Veuillez sélectionner une région pour afficher le rapport.', humidity: 'Humidité', wind: 'Vitesse du vent', visibility: 'Visibilité', uv: 'Indice UV', forecast: 'Prévisions futures', backSetup: '⬅ Retour aux paramètres', logout: 'Déconnexion', alertOn: '🔔 Alertes actives', alertOff: '🔔 Alertes météo', userPrefix: 'Utilisateur actif: ', updatePrefix: 'Dernière mise à jour: ', windUnit: ' km/h', visUnit: ' km' },
+    
+    'de': { sideTitle: 'Standortanpassung', countryLabel: 'Land auswählen:', welcome: 'Willkommen beim SIGNAL Dashboard System.', welcomeSub: 'Bitte wählen Sie eine Region, um den Bericht anzuzeigen.', humidity: 'Luftfeuchtigkeit', wind: 'Windgeschwindigkeit', visibility: 'Sichtweite', uv: 'UV-Index', forecast: 'Zukünftige Vorhersage', backSetup: '⬅ Zurück zu den Einstellungen', logout: 'Abmelden', alertOn: '🔔 Warnungen aktiv', alertOff: '🔔 Wetterwarnungen', userPrefix: 'Aktiver Benutzer: ', updatePrefix: 'Letztes Update: ', windUnit: ' km/h', visUnit: ' km' },
+    
+    'tr': { sideTitle: 'Konum Özelleştirme', countryLabel: 'Ülke Seçin:', welcome: 'SIGNAL Kontrol Paneli Sistemine Hoş Geldiniz.', welcomeSub: 'Raporu görüntülemek için bir bölge seçin.', humidity: 'Nem', wind: 'Rüzgar Hızı', visibility: 'Görüş Mesafesi', uv: 'UV İndeksi', forecast: 'Gelecek Tahmin', backSetup: '⬅ Ayarlara Geri Dön', logout: 'Çıkış Yap', alertOn: '🔔 Uyarılar Aktif', alertOff: '🔔 Hava Durumu Uyarıları', userPrefix: 'Aktif Kullanıcı: ', updatePrefix: 'Son Güncelleme: ', windUnit: ' km/s', visUnit: ' km' },
+    
+    'es': { sideTitle: 'Personalización de ubicación', countryLabel: 'Seleccionar país:', welcome: 'Bienvenido al Sistema de Panel SIGNAL.', welcomeSub: 'Seleccione una región para ver el informe.', humidity: 'Humedad', wind: 'Velocidad del viento', visibility: 'Visibilidad', uv: 'Índice UV', forecast: 'Pronóstico futuro', backSetup: '⬅ Volver a Configuración', logout: 'Cerrar sesión', alertOn: '🔔 Alertas activas', alertOff: '🔔 Alertas meteorológicas', userPrefix: 'Usuario activo: ', updatePrefix: 'Última actualización: ', windUnit: ' km/h', visUnit: ' km' },
+    
+    'zh': { sideTitle: '位置定制', countryLabel: '选择国家:', welcome: '欢迎使用 SIGNAL 仪表板系统。', welcomeSub: '请选择一个区域以查看报告。', humidity: '湿度', wind: '风速', visibility: '能见度', uv: '紫外线指数', forecast: '未来预报', backSetup: '⬅ 返回设置', logout: '安全退出', alertOn: '🔔 警报已激活', alertOff: '🔔 天气警报', userPrefix: '活动用户: ', updatePrefix: '最后更新: ', windUnit: ' 公里/小时', visUnit: ' 公里' },
+    
+    'ja': { sideTitle: 'ロケーションのカスタマイズ', countryLabel: '国を選択:', welcome: 'SIGNAL ダッシュボードシステムへようこそ。', welcomeSub: 'レポートを表示する地域を選択してください。', humidity: '湿度', wind: '風速', visibility: '視程', uv: 'UV指数', forecast: '今後の予報', backSetup: '⬅ 設定に戻る', logout: 'ログアウト', alertOn: '🔔 アラートが有効です', alertOff: '🔔 天気アラート', userPrefix: 'アクティブユーザー: ', updatePrefix: '最終更新: ', windUnit: ' km/h', visUnit: ' km' }
+};
 
         const countryNamesDatabase = {
-            "EG": { label: "اختر المحافظة:", cities: ["القاهرة", "الإسكندرية", "الجيزة", "بورسعيد", "الأقصر", "أسوان"] },
-            "US": { label: "Select State:", cities: ["New York", "California", "Texas", "Florida", "Washington"] },
-            "SA": { label: "اختر المنطقة:", cities: ["الرياض", "مكة المكرمة", "جدة", "المدينة المنورة"] },
-            "AE": { label: "اختر الإمارة:", cities: ["أبوظبي", "دبي", "الشارقة", "العين"] },
-            "CN": { label: "Select City:", cities: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen"] },
-            "JP": { label: "Select City:", cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama"] }
-        };
+    "EG": { label: "اختر المحافظة:", cities: ["القاهرة", "الإسكندرية", "الجيزة", "بورسعيد", "الأقصر", "أسوان", "الشرقية", "الدقهلية", "الإسماعيلية"] },
+    "SA": { label: "اختر المنطقة:", cities: ["الرياض", "مكة المكرمة", "المدينة المنورة", "جدة", "الدمام", "تبوك", "أبها", "القصيم"] },
+    "AE": { label: "اختر الإمارة:", cities: ["أبوظبي", "دبي", "الشارقة", "عجمان", "أم القيوين", "رأس الخيمة", "الفجيرة", "العين"] },
+    "JO": { label: "اختر المحافظة:", cities: ["عمان", "إربد", "الزرقاء", "العقبة", "الكرك", "المفرق", "جرش"] },
+    "MA": { label: "اختر المدينة:", cities: ["الدار البيضاء", "الرباط", "مراكش", "فاس", "طنجة", "أكادير", "وجدة"] },
+    "DZ": { label: "اختر الولاية:", cities: ["الجزائر العاصمة", "وهران", "قسنطينة", "عنابة", "سطيف", "بسكرة"] },
+    "KW": { label: "اختر المنطقة:", cities: ["مدينة الكويت", "حولي", "السالمية", "الفروانية", "الأحمدي", "الجهراء"] },
+    "QA": { label: "اختر المدينة:", cities: ["الدوحة", "الوكرة", "الخور", "الريان", "أم صلال", "الشمال"] },
+    "US": { label: "Select State:", cities: ["New York", "California", "Texas", "Florida", "Illinois", "Washington", "Arizona", "Nevada"] },
+    "GB": { label: "Select City:", cities: ["London", "Manchester", "Birmingham", "Liverpool", "Glasgow", "Edinburgh"] },
+    "FR": { label: "Choisir la ville:", cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Bordeaux"] },
+    "DE": { label: "Stadt auswählen:", cities: ["Berlin", "München", "Hamburg", "Köln", "Frankfurt", "Stuttgart"] },
+    "CN": { label: "Select City:", cities: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu", "Wuhan"] },
+    "JP": { label: "Select City:", cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Nagoya", "Sapporo"] },
+    "TR": { label: "Şehir seçin:", cities: ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Gaziantep"] },
+    "ES": { label: "Seleccionar ciudad:", cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Málaga", "Bilbao"] }
+};
 
         window.onload = function() {
             const session = localStorage.getItem('sgl_current_session');
@@ -306,23 +332,22 @@
         }
 
         function buildRegionsList(code) {
-            const config = countryNamesDatabase[code] || { label: "Select City:", cities: ["Capital"] };
-            document.getElementById('regionLabel').innerText = config.label;
-            const s = document.getElementById('regionSelect');
-            s.innerHTML = '<option value="">-- Select --</option>';
-            config.cities.forEach(c => { const o = document.createElement('option'); o.value = c; o.innerText = c; s.appendChild(o); });
-            document.getElementById('weatherDashboard').style.display = 'none';
-            document.getElementById('welcomeMessage').style.display = 'block';
-            document.getElementById('splitViewContainer').style.display = 'none';
+    const config = countryNamesDatabase[code];
+    document.getElementById('regionLabel').innerText = config.label;
+    const s = document.getElementById('regionSelect');
+    s.innerHTML = '<option value="">-- اختر --</option>';
+    config.cities.forEach(c => { const o = document.createElement('option'); o.value = `${c},${code}`; o.innerText = c; s.appendChild(o); });
+    document.getElementById('weatherDashboard').style.display = 'none';
+    document.getElementById('welcomeMessage').style.display = 'block';
+    document.getElementById('splitViewContainer').style.display = 'none';
         }
 
         function buildSplitRegionsList(location, code) {
-            const config = countryNamesDatabase[code] || { label: "Select City:", cities: ["Capital"] };
-            const s = document.getElementById(`splitRegion${location}`);
-            s.innerHTML = '<option value="">-- Select --</option>';
-            config.cities.forEach(c => { const o = document.createElement('option'); o.value = c; o.innerText = c; s.appendChild(o); });
+    const config = countryNamesDatabase[code];
+    const s = document.getElementById(`splitRegion${location}`);
+    s.innerHTML = '<option value="">-- اختر --</option>';
+    config.cities.forEach(c => { const o = document.createElement('option'); o.value = `${c},${code}`; o.innerText = c; s.appendChild(o); });
         }
-
         function onCountryChange(c) { buildRegionsList(c); }
 
         function updateSplitCountryRegions(location) {
