@@ -298,7 +298,9 @@
     <option value="PE">🇵🇪 Peru</option>
     <option value="VE">🇻🇪 Venezuela</option>
     <option value="AU">🇦🇺 Australia</option>
-    
+
+                           <select id="splitCity1" onchange="compareWeather ()">
+                               <option>اختر المدينه</option>
 
                             <select id="splitRegion1" onchange="updateSplitWeather(1)"></select>
                         </div>
@@ -396,8 +398,10 @@
     <option value="PE">🇵🇪 Peru</option>
     <option value="VE">🇻🇪 Venezuela</option>
     <option value="AU">🇦🇺 Australia</option>
+                                <select id="splitCity1" onchange="compareWeather ()">
+                               <option>اختر المدينه</option>
 
-                            <select id="splitRegion2" onchange="updateSplitWeather(2)"></select>
+                            <select id="splitRegion2" onchange="updateSplitWeather(2)"></select>       
                         </div>
                         <div class="split-weather-box" id="splitWeather2">
                             <div class="split-location-name" id="splitLoc2">--</div>
@@ -1111,6 +1115,8 @@
             // Initialize split view
             buildSplitRegionsList(1, settings.country.code);
             buildSplitRegionsList(2, settings.country.code);
+
+
         }
 
         function applyTranslation(l) {
