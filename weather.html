@@ -222,7 +222,7 @@
                     <div>
                         <div class="split-location-select">
                             <label id="tr-split-location1">اختر الموقع الأول:</label>
-                            <select id="splitCountry2" onchange="updateSplitCountryRegions(2)">
+                            <select id="splitCountry1" onchange="updateSplitCountryRegions(1)">
     <option value="EG">🇪🇬 Egypt</option>
     <option value="SA">🇸🇦 Saudi Arabia</option>
     <option value="AE">🇦🇪 United Arab Emirates</option>
@@ -1104,6 +1104,9 @@
             document.getElementById('userDisplay').innerText = translations[userLang].userPrefix + session;
             document.getElementById('countrySelect').value = settings.country.code;
             buildRegionsList(settings.country.code);
+
+            document.getElementById('splitCountry1').value = settings.country.code;
+            document.getElementById('splitCountry2').value = settings.country.code;
             
             // Initialize split view
             buildSplitRegionsList(1, settings.country.code);
