@@ -172,7 +172,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_tGQS13Ng8umCsAGD3Pyyuw_Q14EDwpQ';
             });
 
             if (error) {
-                showStatus('البريد الإلكتروني أو كلمة المرور غير صحيحة!', false);
+                showStatus('error.message, false);
             } else {
                 localStorage.setItem('sgl_current_session', email);
                 window.location.href = 'setup.html';
