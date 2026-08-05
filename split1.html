@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L91T00TK4K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-L91T00TK4K');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGNAL - Split & Compare Dashboard</title>
+    <style>
+        :root { --primary: #3b82f6; --accent: #10b981; --bg-dark: #080c14; --panel-bg: rgba(17, 24, 39, 0.85); --border: rgba(255, 255, 255, 0.08); --text-muted: #9ca3af; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-dark); color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow-x: hidden; position: relative; }
+        
+        .bg-watermark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; font-size: 15vw; font-weight: 900; color: rgba(255, 255, 255, 0.01); user-select: none; pointer-events: none; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 50px; z-index: 1; text-transform: uppercase; }
+        .container { max-width: 1400px; width: 95%; margin: 20px auto; z-index: 2; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        
+        .header-bar { background: var(--panel-bg); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-title { font-size: 22px; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        
+        .selection-panel { background: var(--panel-bg); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border); padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .selector-group { background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 15px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+        .group-title { font-size: 16px; font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+        .select-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #374151; background: #1f2937; color: white; font-size: 14px; cursor: pointer; outline: none; }
+        
+        .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; }
+        .weather-card { background: var(--panel-bg); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; position: relative; min-height: 380px; transition: 0.3s; }
+        .weather-card:hover { border-color: rgba(59, 130, 246, 0.3); }
+        .card-header h2 { font-size: 26px; color: #fff; font-weight: 800; }
+        .card-header p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+        .card-temp-main { display: flex; align-items: center; justify-content: space-around; margin: 20px 0; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; }
+        .temp-value { font-size: 64px; font-weight: 900; color: #fff; }
+        .status-box { text-align: center; }
+        .status-box img { width: 70px; height: 70px; }
+        .status-desc { font-size: 18px; font-weight: bold; color: var(--primary); }
+        
+        .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .metric-box { background: #111827; border: 1px solid #1f2937; padding: 12px; border-radius: 10px; text-align: center; }
+        .metric-box span { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .metric-box strong { font-size: 16px; color: #fff; }
+
+        .comparison-box { background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95)); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--accent); padding: 25px; margin-top: 10px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
+        .comp-title { font-size: 20px; font-weight: bold; color: var(--accent); margin-bottom: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+        .comp-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .comp-item h4 { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .comp-item p { font-size: 16px; font-weight: bold; color: #fff; }
+        .comp-winner { color: #f59e0b !important; }
+
+        .btn-link { background: #374151; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; transition: 0.3s; }
+        .btn-link:hover { background: #4b5563; }
+        .btn-danger { background: #991b1b; border: none; color: white; padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+
+        footer { background-color: #000000; text-align: center; padding: 15px; font-size: 14px; color: var(--text-muted); border-top: 1px solid #111827; z-index: 2; margin-top: 20px; }
+
+        @media(max-width: 900px) {
+            .selection-panel { grid-template-columns: 1fr; }
+            .split-grid { grid-template-columns: 1fr; }
+            .select-row { grid-template-columns: 1fr; }
+            .temp-value { font-size: 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-watermark"><span>SIGNAL</span></div>
+
+    <div class="container">
+        <!-- Header Controls -->
+        <div class="header-bar">
+            <div class="header-title" id="tr-page-title">📊 شاشة التقسيم والمقارنة المباشرة</div>
+            <div id="userDisplay" style="font-size: 13px; color: var(--text-muted);">User: Guest</div>
+            <div class="header-actions">
+                <a href="weather.html" class="btn-link" id="tr-back-dash">⬅ العودة للوحة الرئيسية</a>
+                <a href="setup.html" class="btn-link" id="tr-back-setup">⚙ الإعدادات</a>
+                <button class="btn-danger" id="tr-logout" onclick="logoutSystem()">خروج</button>
+            </div>
+        </div>
+
+        <!-- Country and City Selectors -->
+        <div class="selection-panel">
+            <!-- Selector 1 -->
+            <div class="selector-group">
+                <div class="group-title" id="tr-title-c1">المنطقة الأولى (الجانب الأيمن)</div>
+                <div class="select-row">
+                    <div>
+                        <select id="countrySelect1" onchange="buildRegions(1, this.value)">
+                            <option value="">-- اختر الدولة --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="citySelect1" onchange="fetchWeather(1)">
+                            <option value="">-- اختر المدينة --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selector 2 -->
+            <div class="selector-group">
+                <div class="group-title" id="tr-title-c2">المنطقة الثانية (الجانب الأيسر)</div>
+                <div class="select-row">
+                    <div>
+                        <select id="countrySelect2" onchange="buildRegions(2, this.value)">
+                            <option value="">-- اختر الدولة --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="citySelect2" onchange="fetchWeather(2)">
+                            <option value="">-- اختر المدينة --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Split Weather Screen -->
+        <div class="split-grid">
+            <!-- Card 1 -->
+            <div class="weather-card" id="card1">
+                <div class="card-header">
+                    <h2 id="c1-name">-- اختر مدينة --</h2>
+                    <p id="c1-time">--</p>
+                </div>
+                <div class="card-temp-main">
+                    <div class="temp-value" id="c1-temp">--</div>
+                    <div class="status-box">
+                        <img id="c1-icon" src="" alt="">
+                        <div class="status-desc" id="c1-cond">--</div>
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-box"><span class="lbl-hum">الرطوبة</span><strong id="c1-hum">--</strong></div>
+                    <div class="metric-box"><span class="lbl-wind">الرياح</span><strong id="c1-wind">--</strong></div>
+                    <div class="metric-box"><span class="lbl-vis">الرؤية</span><strong id="c1-vis">--</strong></div>
+                    <div class="metric-box"><span class="lbl-uv">الأشعة UV</span><strong id="c1-uv">--</strong></div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="weather-card" id="card2">
+                <div class="card-header">
+                    <h2 id="c2-name">-- اختر مدينة --</h2>
+                    <p id="c2-time">--</p>
+                </div>
+                <div class="card-temp-main">
+                    <div class="temp-value" id="c2-temp">--</div>
+                    <div class="status-box">
+                        <img id="c2-icon" src="" alt="">
+                        <div class="status-desc" id="c2-cond">--</div>
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-box"><span class="lbl-hum">الرطوبة</span><strong id="c2-hum">--</strong></div>
+                    <div class="metric-box"><span class="lbl-wind">الرياح</span><strong id="c2-wind">--</strong></div>
+                    <div class="metric-box"><span class="lbl-vis">الرؤية</span><strong id="c2-vis">--</strong></div>
+                    <div class="metric-box"><span class="lbl-uv">الأشعة UV</span><strong id="c2-uv">--</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Box -->
+        <div class="comparison-box">
+            <div class="comp-title" id="tr-comp-title">📋 ملخص المقارنة بين المدينتين</div>
+            <div class="comp-grid">
+                <div class="comp-item">
+                    <h4 id="tr-comp-temp">فارق الحرارة</h4>
+                    <p id="res-temp-diff">--</p>
+                </div>
+                <div class="comp-item">
+                    <h4 id="tr-comp-hum">المدينة الأكثر رطوبة</h4>
+                    <p id="res-hum-diff">--</p>
+                </div>
+                <div class="comp-item">
+                    <h4 id="tr-comp-wind">المدينة الأشد رياحاً</h4>
+                    <p id="res-wind-diff">--</p>
+                </div>
+                <div class="comp-item">
+                    <h4 id="tr-comp-summary">الحالة العامة</h4>
+                    <p id="res-summary" class="comp-winner">-- الرجاء اختيار المدينتين للبدء --</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="tr-footer">©2026 Developer Yahia Khairy</footer>
+
+    <script>
+        const apiKey = "45ca785dde6c48f7846114104263107";
+        let tempUnit = "C", userLang = "ar";
+        let city1Data = null, city2Data = null;
+
+        const countryNamesDatabase = {
+            "EG": { label: "اختر المحافظة:", cities: ["Cairo", "Alexandria", "Giza", "Port Said", "Luxor", "Aswan", "Sharqia", "Dakahlia", "Ismailia"] },
+            "SA": { label: "اختر المنطقة:", cities: ["Riyadh", "Makkah", "Madinah", "Jeddah", "Dammam", "Tabuk", "Abha", "Qassim"] },
+            "AE": { label: "اختر الإمارة:", cities: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah", "Al Ain"] },
+            "JO": { label: "اختر المحافظة:", cities: ["Amman", "Irbid", "Zarqa", "Aqaba", "Karak", "Mafraq", "Jerash"] },
+            "MA": { label: "اختر المدينة:", cities: ["Casablanca", "Rabat", "Marrakech", "Fes", "Tangier", "Agadir", "Oujda"] },
+            "DZ": { label: "اختر الولاية:", cities: ["Algiers", "Oran", "Constantine", "Annaba", "Setif", "Biskra", "Tlemcen"] },
+            "KW": { label: "اختر المنطقة:", cities: ["Kuwait City", "Hawalli", "Salmiya", "Farwaniya", "Ahmadi", "Jahra", "Fintas"] },
+            "QA": { label: "اختر المدينة:", cities: ["Doha", "Al Wakrah", "Al Khor", "Al Rayyan", "Umm Salal", "Al Shamal", "Al Daayen"] },
+            "US": { label: "Select State:", cities: ["New York", "California", "Texas", "Florida", "Illinois", "Washington", "Arizona"] },
+            "GB": { label: "Select City:", cities: ["London", "Manchester", "Birmingham", "Liverpool", "Glasgow", "Edinburgh", "Bristol"] },
+            "FR": { label: "Choisir la ville:", cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Bordeaux", "Lille"] },
+            "DE": { label: "Stadt auswählen:", cities: ["Berlin", "München", "Hamburg", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf"] },
+            "CN": { label: "Select City:", cities: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu", "Wuhan", "Hangzhou"] },
+            "JP": { label: "Select City:", cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Nagoya", "Sapporo", "Fukuoka"] },
+            "TR": { label: "Şehir seçin:", cities: ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Gaziantep", "Konya"] },
+            "ES": { label: "Seleccionar ciudad:", cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Málaga", "Bilbao", "Zaragoza"] },
+            "ZA": { label: "Select City:", cities: ["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth", "Bloemfontein", "East London"] },
+            "NG": { label: "Select City:", cities: ["Lagos", "Kano", "Ibadan", "Abuja", "Port Harcourt", "Benin City", "Kaduna"] },
+            "KE": { label: "Select City:", cities: ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika", "Malindi"] },
+            "GH": { label: "Select City:", cities: ["Accra", "Kumasi", "Tamale", "Sekondi-Takoradi", "Sunyani", "Cape Coast", "Obuasi"] },
+            "ET": { label: "Select City:", cities: ["Addis Ababa", "Dire Dawa", "Mekelle", "Gondar", "Hawassa", "Bahir Dar", "Jimma"] },
+            "TN": { label: "اختر الولاية:", cities: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte", "Gabes", "Ariana"] },
+            "LY": { label: "اختر المدينة:", cities: ["Tripoli", "Benghazi", "Misrata", "Al Bayda", "Sabha", "Zawiya", "Tobruk"] },
+            "SD": { label: "اختر المدينة:", cities: ["Khartoum", "Omdurman", "Port Sudan", "Kassala", "Gedaref", "Wad Madani", "Nyala"] },
+            "SN": { label: "Choisir la ville:", cities: ["Dakar", "Touba", "Thiès", "Saint-Louis", "Kaolack", "Ziguinchor", "Diourbel"] },
+            "UG": { label: "Select City:", cities: ["Kampala", "Gulu", "Lira", "Mbarara", "Jinja", "Mbale", "Soroti"] },
+            "TZ": { label: "Select City:", cities: ["Dar es Salaam", "Dodoma", "Mwanza", "Arusha", "Mbeya", "Morogoro", "Tanga"] },
+            "ZW": { label: "Select City:", cities: ["Harare", "Bulawayo", "Chitungwiza", "Mutare", "Gweru", "Kwekwe", "Kadoma"] },
+            "CM": { label: "Choisir la ville:", cities: ["Yaoundé", "Douala", "Bamenda", "Bafoussam", "Garoua", "Maroua", "Ngaoundéré"] },
+            "CI": { label: "Choisir la ville:", cities: ["Abidjan", "Bouaké", "Daloa", "Yamoussoukro", "San-Pédro", "Korhogo", "Man"] },
+            "AO": { label: "Selecionar cidade:", cities: ["Luanda", "Huambo", "Lobito", "Benguela", "Kuito", "Lubango", "Malanje"] },
+            "MZ": { label: "Selecionar cidade:", cities: ["Maputo", "Matola", "Beira", "Nampula", "Chimoio", "Nacala", "Quelimane"] },
+            "MG": { label: "Choisir la ville:", cities: ["Antananarivo", "Toamasina", "Antsirabe", "Mahajanga", "Toliara", "Fianarantsoa", "Antsiranana"] },
+            "BF": { label: "Choisir la ville:", cities: ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Ouahigouya", "Banfora", "Kaya", "Tenkodogo"] },
+            "ML": { label: "Choisir la ville:", cities: ["Bamako", "Sikasso", "Mopti", "Kayes", "Ségou", "Gao", "Tombouctou"] },
+            "NE": { label: "Choisir la ville:", cities: ["Niamey", "Zinder", "Maradi", "Agadez", "Tahoua", "Arlit", "Diffa"] },
+            "IT": { label: "Seleziona città:", cities: ["Roma", "Milano", "Napoli", "Torino", "Palermo", "Genova", "Bologna"] },
+            "NL": { label: "Selecteer stad:", cities: ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Eindhoven", "Tilburg", "Groningen"] },
+            "SE": { label: "Välj stad:", cities: ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås", "Örebro", "Linköping"] },
+            "NO": { label: "Velg by:", cities: ["Oslo", "Bergen", "Trondheim", "Stavanger", "Drammen", "Fredrikstad", "Kristiansand"] },
+            "CH": { label: "Stadt auswählen:", cities: ["Zürich", "Genf", "Basel", "Bern", "Lausanne", "Winterthur", "Luzern"] },
+            "AT": { label: "Stadt auswählen:", cities: ["Wien", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt", "Villach"] },
+            "BE": { label: "Choisir la ville:", cities: ["Bruxelles", "Anvers", "Gand", "Charleroi", "Liège", "Bruges", "Namur"] },
+            "PT": { label: "Selecionar cidade:", cities: ["Lisboa", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Coimbra", "Funchal"] },
+            "PL": { label: "Wybierz miasto:", cities: ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin"] },
+            "GR": { label: "Επιλέξτε πόλη:", cities: ["Αθήνα", "Θεσσαλονίκη", "Πάτρα", "Ηράκλειο", "Λάρισα", "Βόλος", "Ιωάννινα"] },
+            "DK": { label: "Vælg by:", cities: ["København", "Aarhus", "Odense", "Aalborg", "Esbjerg", "Randers", "Kolding"] },
+            "FI": { label: "Valitse kaupunki:", cities: ["Helsinki", "Espoo", "Tampere", "Vantaa", "Oulu", "Turku", "Jyväskylä"] },
+            "IE": { label: "Select City:", cities: ["Dublin", "Cork", "Limerick", "Galway", "Waterford", "Drogheda", "Dundalk"] },
+            "CZ": { label: "Vyberte město:", cities: ["Praha", "Brno", "Ostrava", "Plzeň", "Liberec", "Olomouc", "Ústí nad Labem"] },
+            "HU": { label: "Válasszon várost:", cities: ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pécs", "Győr", "Nyíregyháza"] },
+            "IN": { label: "Select City:", cities: ["Delhi", "Mumbai", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata"] },
+            "KR": { label: "도시를 선택하세요:", cities: ["Seoul", "Busan", "Incheon", "Daegu", "Daejeon", "Gwangju", "Suwon"] },
+            "SG": { label: "Select City:", cities: ["Singapore", "Woodlands", "Tampines", "Jurong", "Hougang", "Bedok", "Ang Mo Kio"] },
+            "MY": { label: "Pilih Bandar:", cities: ["Kuala Lumpur", "George Town", "Ipoh", "Johor Bahru", "Shah Alam", "Malacca", "Petaling Jaya"] },
+            "ID": { label: "Pilih Kota:", cities: ["Jakarta", "Surabaya", "Bandung", "Medan", "Semarang", "Makassar", "Palembang"] },
+            "PK": { label: "شہر منتخب کریں:", cities: ["Karachi", "Lahore", "Faisalabad", "Rawalpindi", "Multan", "Peshawar", "Quetta"] },
+            "BD": { label: "শহর নির্বাচন করুন:", cities: ["Dhaka", "Chittagong", "Khulna", "Sylhet", "Rajshahi", "Barisal", "Rangpur"] },
+            "PH": { label: "Pumili ng Lungsod:", cities: ["Manila", "Quezon City", "Davao", "Caloocan", "Cebu", "Zamboanga", "Taguig"] },
+            "VN": { label: "Chọn thành phố:", cities: ["Hồ Chí Minh", "Hà Nội", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Biên Hòa", "Nha Trang"] },
+            "TH": { label: "เลือกเมือง:", cities: ["Bangkok", "Chiang Mai", "Nakhon Ratchasima", "Khon Kaen", "Hat Yai", "Udon Thani", "Pattaya"] },
+            "IR": { label: "شهر را انتخاب کنید:", cities: ["Tehran", "Mashhad", "Isfahan", "Karaj", "Shiraz", "Tabriz", "Qom"] },
+            "IQ": { label: "اختر المدينة:", cities: ["Baghdad", "Basra", "Mosul", "Erbil", "Sulaymaniyah", "Najaf", "Karbala"] },
+            "LB": { label: "اختر المدينة:", cities: ["Beirut", "Tripoli", "Sidon", "Tyre", "Zahle", "Byblos", "Baalbek"] },
+            "SY": { label: "اختر المدينة:", cities: ["Damascus", "Aleppo", "Homs", "Hama", "Latakia", "Deir ez-Zor", "Raqqa"] },
+            "OM": { label: "اختر المدينة:", cities: ["Muscat", "Salalah", "Sohar", "Nizwa", "Ibri", "Rustaq", "Sur"] },
+            "CA": { label: "Select City:", cities: ["Toronto", "Montreal", "Vancouver", "Calgary", "Ottawa", "Edmonton", "Winnipeg"] },
+            "BR": { label: "Selecionar cidade:", cities: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte", "Manaus"] },
+            "AR": { label: "Seleccionar ciudad:", cities: ["Buenos Aires", "Córdoba", "Rosario", "Mendoza", "La Plata", "San Miguel de Tucumán", "Mar del Plata"] },
+            "MX": { label: "Seleccionar ciudad:", cities: ["Ciudad de México", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "León", "Ciudad Juárez"] },
+            "CO": { label: "Seleccionar ciudad:", cities: ["Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Cúcuta", "Bucaramanga"] },
+            "CL": { label: "Seleccionar ciudad:", cities: ["Santiago", "Valparaíso", "Concepción", "La Serena", "Antofagasta", "Temuco", "Rancagua"] },
+            "PE": { label: "Seleccionar ciudad:", cities: ["Lima", "Arequipa", "Trujillo", "Chiclayo", "Piura", "Iquitos", "Cusco"] },
+            "VE": { label: "Seleccionar ciudad:", cities: ["Caracas", "Maracaibo", "Valencia", "Barquisimeto", "Maracay", "Ciudad Guayana", "Barcelona"] },
+            "AU": { label: "Select City:", cities: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Canberra"] }
+        };
+
+        // Full translations dictionary supporting all 25 languages
+        const translations = {
+            'ar': { pageTitle: '📊 شاشة التقسيم والمقارنة المباشرة', backDash: '⬅ لوحة التحكم', backSetup: '⚙ الإعدادات', logout: 'خروج', c1Title: 'المنطقة الأولى (الجانب الأيمن)', c2Title: 'المنطقة الثانية (الجانب الأيسر)', hum: 'الرطوبة', wind: 'الرياح', vis: 'الرؤية', uv: 'الأشعة UV', compTitle: '📋 ملخص المقارنة بين المدينتين', compTemp: 'فارق الحرارة', compHum: 'الأعلى رطوبة', compWind: 'الأشد رياحاً', compSummary: 'النتيجة العامة', warmer: 'أدفأ بـ', cooler: 'أبرد بـ', same: 'متساويان في الحرارة', footer: '©2026 Developer Yahia Khairy', userPrefix: 'المستخدم: ', selectCountry: '-- اختر الدولة --', selectCity: '-- اختر المدينة --', selectBoth: '-- الرجاء اختيار المدينتين للبدء --' },
+            'en': { pageTitle: '📊 Split Screen & Comparison', backDash: '⬅ Dashboard', backSetup: '⚙ Setup', logout: 'Logout', c1Title: 'Region 1 (Right Side)', c2Title: 'Region 2 (Left Side)', hum: 'Humidity', wind: 'Wind', vis: 'Visibility', uv: 'UV Index', compTitle: '📋 Comparison Summary', compTemp: 'Temperature Difference', compHum: 'Higher Humidity', compWind: 'Stronger Wind', compSummary: 'Overall Summary', warmer: 'warmer by', cooler: 'cooler by', same: 'Same temperature', footer: '©2026 Developer Yahia Khairy', userPrefix: 'User: ', selectCountry: '-- Select Country --', selectCity: '-- Select City --', selectBoth: '-- Please select both cities to start --' },
+            'fr': { pageTitle: '📊 Écran Divisé & Comparaison', backDash: '⬅ Tableau de bord', backSetup: '⚙ Configuration', logout: 'Déconnexion', c1Title: 'Région 1 (Côté Droit)', c2Title: 'Région 2 (Côté Gauche)', hum: 'Humidité', wind: 'Vent', vis: 'Visibilité', uv: 'Indice UV', compTitle: '📋 Résumé de la Comparaison', compTemp: 'Différence de température', compHum: 'Plus Humide', compWind: 'Vent plus fort', compSummary: 'Résumé Global', warmer: 'plus chaud de', cooler: 'plus froid de', same: 'Même température', footer: '©2026 Développeur Yahya Khairy', userPrefix: 'Utilisateur: ', selectCountry: '-- Sélectionner le pays --', selectCity: '-- Sélectionner la ville --', selectBoth: '-- Veuillez sélectionner les deux villes --' },
+            'es': { pageTitle: '📊 Pantalla Dividida y Comparación', backDash: '⬅ Panel', backSetup: '⚙ Ajustes', logout: 'Salir', c1Title: 'Región 1 (Lado Derecho)', c2Title: 'Región 2 (Lado Izquierdo)', hum: 'Humedad', wind: 'Viento', vis: 'Visibilidad', uv: 'Índice UV', compTitle: '📋 Resumen de Comparación', compTemp: 'Diferencia de temperatura', compHum: 'Más Húmedo', compWind: 'Viento más fuerte', compSummary: 'Resumen General', warmer: 'más cálido por', cooler: 'más frío por', same: 'Misma temperatura', footer: '©2026 Desarrollador Yahya Khairy', userPrefix: 'Usuario: ', selectCountry: '-- Seleccionar país --', selectCity: '-- Seleccionar ciudad --', selectBoth: '-- Por favor seleccione ambas ciudades --' },
+            'de': { pageTitle: '📊 Geteilter Bildschirm & Vergleich', backDash: '⬅ Dashboard', backSetup: '⚙ Einstellungen', logout: 'Abmelden', c1Title: 'Region 1 (Rechte Seite)', c2Title: 'Region 2 (Linke Seite)', hum: 'Luftfeuchtigkeit', wind: 'Wind', vis: 'Sichtweite', uv: 'UV-Index', compTitle: '📋 Vergleichsübersicht', compTemp: 'Temperaturunterschied', compHum: 'Höhere Luftfeuchtigkeit', compWind: 'Stärkerer Wind', compSummary: 'Gesamtergebnis', warmer: 'wärmer um', cooler: 'kälter um', same: 'Gleiche Temperatur', footer: '©2026 Entwickler Yahya Khairy', userPrefix: 'Benutzer: ', selectCountry: '-- Land auswählen --', selectCity: '-- Stadt auswählen --', selectBoth: '-- Bitte beide Städte auswählen --' },
+            'tr': { pageTitle: '📊 Bölünmüş Ekran ve Karşılaştırma', backDash: '⬅ Panel', backSetup: '⚙ Ayarlar', logout: 'Çıkış', c1Title: '1. Bölge (Sağ Taraf)', c2Title: '2. Bölge (Sol Taraf)', hum: 'Nem', wind: 'Rüzgar', vis: 'Görüş Mesafesi', uv: 'UV İndeksi', compTitle: '📋 Karşılaştırma Özeti', compTemp: 'Sıcaklık Farkı', compHum: 'Daha Yüksek Nem', compWind: 'Daha Güçlü Rüzgar', compSummary: 'Genel Özet', warmer: 'daha sıcak', cooler: 'daha soğuk', same: 'Aynı sıcaklık', footer: '©2026 Geliştirici Yahya Khairy', userPrefix: 'Kullanıcı: ', selectCountry: '-- Ülke Seçin --', selectCity: '-- Şehir Seçin --', selectBoth: '-- Lütfen her iki şehri de seçin --' },
+            'zh': { pageTitle: '📊 分屏与对比', backDash: '⬅ 仪表板', backSetup: '⚙ 设置', logout: '退出', c1Title: '区域 1 (右侧)', c2Title: '区域 2 (左侧)', hum: '湿度', wind: '风速', vis: '能见度', uv: '紫外线指数', compTitle: '📋 对比摘要', compTemp: '温差', compHum: '较高湿度', compWind: '较强风速', compSummary: '总体总结', warmer: '高', cooler: '低', same: '温度相同', footer: '©2026 开发者 Yahya Khairy', userPrefix: '用户: ', selectCountry: '-- 选择国家 --', selectCity: '-- 选择城市 --', selectBoth: '-- 请选择两个城市 --' },
+            'ja': { pageTitle: '📊 分割画面と比較', backDash: '⬅ ダッシュボード', backSetup: '⚙ 設定', logout: 'ログアウト', c1Title: '地域 1 (右側)', c2Title: '地域 2 (左側)', hum: '湿度', wind: '風速', vis: '視程', uv: 'UV指数', compTitle: '📋 比較サマリー', compTemp: '温度差', compHum: 'より高い湿度', compWind: 'より強い風', compSummary: '全体概要', warmer: '暖かい', cooler: '涼しい', same: '同じ温度', footer: '©2026 開発者 ヤヒヤ・ハイリ', userPrefix: 'ユーザー: ', selectCountry: '-- 国を選択 --', selectCity: '-- 都市を選択 --', selectBoth: '-- 両方の都市を選択してください --' },
+            'it': { pageTitle: '📊 Schermo Diviso e Confronto', backDash: '⬅ Dashboard', backSetup: '⚙ Impostazioni', logout: 'Esci', c1Title: 'Regione 1 (Lato Destro)', c2Title: 'Regione 2 (Lato Sinistro)', hum: 'Umidità', wind: 'Vento', vis: 'Visibilità', uv: 'Indice UV', compTitle: '📋 Riepilogo Confronto', compTemp: 'Differenza di Temperatura', compHum: 'Umidità Più Alta', compWind: 'Vento Più Forte', compSummary: 'Riepilogo Generale', warmer: 'più caldo di', cooler: 'più freddo di', same: 'Stessa temperatura', footer: '©2026 Sviluppatore Yahya Khairy', userPrefix: 'Utente: ', selectCountry: '-- Seleziona Paese --', selectCity: '-- Seleziona Città --', selectBoth: '-- Seleziona entrambe le città --' },
+            'nl': { pageTitle: '📊 Gesplitst Scherm & Vergelijking', backDash: '⬅ Dashboard', backSetup: '⚙ Instellingen', logout: 'Uitloggen', c1Title: 'Regio 1 (Rechterkant)', c2Title: 'Regio 2 (Linkerkant)', hum: 'Luchtvochtigheid', wind: 'Windsnelheid', vis: 'Zichtbaarheid', uv: 'UV-index', compTitle: '📋 Vergelijkingsoverzicht', compTemp: 'Temperatuurverschil', compHum: 'Hogere Luchtvochtigheid', compWind: 'Sterkere Wind', compSummary: 'Algemeen Overzicht', warmer: 'warmer met', cooler: 'kouder met', same: 'Zelfde temperatuur', footer: '©2026 Ontwikkelaar Yahya Khairy', userPrefix: 'Gebruiker: ', selectCountry: '-- Selecteer Land --', selectCity: '-- Selecteer Stad --', selectBoth: '-- Selecteer beide steden --' },
+            'sv': { pageTitle: '📊 Delad Skärm & Jämförelse', backDash: '⬅ Dashboard', backSetup: '⚙ Inställningar', logout: 'Logga ut', c1Title: 'Region 1 (Höger sida)', c2Title: 'Region 2 (Vänster sida)', hum: 'Fuktighet', wind: 'Vindhastighet', vis: 'Sikt', uv: 'UV-index', compTitle: '📋 Jämförelsesammanfattning', compTemp: 'Temperaturskillnad', compHum: 'Högre fuktighet', compWind: 'Starkare vind', compSummary: 'Övergripande sammanfattning', warmer: 'varmare med', cooler: 'kallare med', same: 'Samma temperatur', footer: '©2026 Utvecklare Yahya Khairy', userPrefix: 'Användare: ', selectCountry: '-- Välj Land --', selectCity: '-- Välj Stad --', selectBoth: '-- Välj båda städerna --' },
+            'no': { pageTitle: '📊 Delt Skjerm og Sammenligning', backDash: '⬅ Dashboard', backSetup: '⚙ Oppsett', logout: 'Logg ut', c1Title: 'Region 1 (Høyre side)', c2Title: 'Region 2 (Venstre side)', hum: 'Fuktighet', wind: 'Vindhastighet', vis: 'Sikt', uv: 'UV-indeks', compTitle: '📋 Sammenligningssammendrag', compTemp: 'Temperaturforskjell', compHum: 'Høyere fuktighet', compWind: 'Sterkere vind', compSummary: 'Samlet sammendrag', warmer: 'varmere med', cooler: 'kaldere med', same: 'Samme temperatur', footer: '©2026 Utvikler Yahya Khairy', userPrefix: 'Bruker: ', selectCountry: '-- Velg Land --', selectCity: '-- Velg By --', selectBoth: '-- Vennligst velg begge byene --' },
+            'pt': { pageTitle: '📊 Tela Dividida e Comparação', backDash: '⬅ Painel', backSetup: '⚙ Configurações', logout: 'Sair', c1Title: 'Região 1 (Lado Direito)', c2Title: 'Região 2 (Lado Esquerdo)', hum: 'Umidade', wind: 'Velocidade do Vento', vis: 'Visibilidade', uv: 'Índice UV', compTitle: '📋 Resumo da Comparação', compTemp: 'Diferença de Temperatura', compHum: 'Maior Umidade', compWind: 'Vento Mais Forte', compSummary: 'Resumo Geral', warmer: 'mais quente por', cooler: 'mais frio por', same: 'Mesma temperatura', footer: '©2026 Desenvolvedor Yahya Khairy', userPrefix: 'Usuário: ', selectCountry: '-- Selecionar País --', selectCity: '-- Selecionar Cidade --', selectBoth: '-- Selecione ambas as cidades --' },
+            'pl': { pageTitle: '📊 Podzielony Ekran i Porównanie', backDash: '⬅ Panel', backSetup: '⚙ Ustawienia', logout: 'Wyloguj', c1Title: 'Region 1 (Prawa strona)', c2Title: 'Region 2 (Lewa strona)', hum: 'Wilgotność', wind: 'Prędkość wiatru', vis: 'Widoczność', uv: 'Indeks UV', compTitle: '📋 Podsumowanie Porównania', compTemp: 'Różnica Temperatur', compHum: 'Wyższa Wilgotność', compWind: 'Silniejszy Wiatr', compSummary: 'Ogólne Podsumowanie', warmer: 'cieplej o', cooler: 'chłodniej o', same: 'Taka sama temperatura', footer: '©2026 Deweloper Yahya Khairy', userPrefix: 'Użytkownik: ', selectCountry: '-- Wybierz Kraj --', selectCity: '-- Wybierz Miasto --', selectBoth: '-- Wybierz oba miasta --' },
+            'el': { pageTitle: '📊 Διαχωρισμός Οθόνης & Σύγκριση', backDash: '⬅ Πίνακας', backSetup: '⚙ Ρυθμίσεις', logout: 'Αποσύνδεση', c1Title: 'Περιοχή 1 (Δεξιά Πλευρά)', c2Title: 'Περιοχή 2 (Αριστερή Πλευρά)', hum: 'Υγρασία', wind: 'Ταχύτητα Ανέμου', vis: 'Ορατότητα', uv: 'Δείκτης UV', compTitle: '📋 Σύνοψη Σύγκρισης', compTemp: 'Διαφορά Θερμοκρασίας', compHum: 'Υψηλότερη Υγρασία', compWind: 'Ισχυρότερος Άνεμος', compSummary: 'Γενική Σύνοψη', warmer: 'θερμότερο κατά', cooler: 'ψυχρότερο κατά', same: 'Íδια θερμοκρασία', footer: '©2026 Προγραμματιστής Yahya Khairy', userPrefix: 'Χρήστης: ', selectCountry: '-- Επιλέξτε Χώρα --', selectCity: '-- Επιλέξτε Πόλη --', selectBoth: '-- Επιλέξτε και τις δύο πόλεις --' },
+            'da': { pageTitle: '📊 Del Skærm & Sammenligning', backDash: '⬅ Dashboard', backSetup: '⚙ Opsætning', logout: 'Log ud', c1Title: 'Region 1 (Højre side)', c2Title: 'Region 2 (Venstre side)', hum: 'Fugtighed', wind: 'Vindhastighed', vis: 'Sigtbarhed', uv: 'UV-indeks', compTitle: '📋 Sammenligningsresumé', compTemp: 'Temperaturforskel', compHum: 'Højere fugtighed', compWind: 'Stærkere vind', compSummary: 'Samlet resumé', warmer: 'varmere med', cooler: 'koldere med', same: 'Samme temperatur', footer: '©2026 Udvikler Yahya Khairy', userPrefix: 'Bruger: ', selectCountry: '-- Vælg Land --', selectCity: '-- Vælg By --', selectBoth: '-- Vælg venligst begge byer --' },
+            'fi': { pageTitle: '📊 Jaettu Näyttö & Vertailu', backDash: '⬅ Kojelauta', backSetup: '⚙ Asetukset', logout: 'Kirjaudu ulos', c1Title: 'Alue 1 (Oikea puoli)', c2Title: 'Alue 2 (Vasen puoli)', hum: 'Kosteus', wind: 'Tuulen Nopeus', vis: 'Näkyvyys', uv: 'UV-indeksi', compTitle: '📋 Vertailun Yhteenveto', compTemp: 'Lämpötila-ero', compHum: 'Korkeampi Kosteus', compWind: 'Voimakkaampi Tuuli', compSummary: 'Yleinen Yhteenveto', warmer: 'lämpimämpi', cooler: 'viileämpi', same: 'Sama lämpötila', footer: '©2026 Kehittäjä Yahya Khairy', userPrefix: 'Käyttäjä: ', selectCountry: '-- Valitse Maa --', selectCity: '-- Valitse Kaupunki --', selectBoth: '-- Valitse molemmat kaupungit --' },
+            'hi': { pageTitle: '📊 स्प्लिट स्क्रीन और तुलना', backDash: '⬅ डैशबोर्ड', backSetup: '⚙ सेटअप', logout: 'लॉगआउट', c1Title: 'क्षेत्र 1 (दाया पक्ष)', c2Title: 'क्षेत्र 2 (बाया पक्ष)', hum: 'नमी', wind: 'हवा की गति', vis: 'दृश्यता', uv: 'यूवी सूचकांक', compTitle: '📋 तुलना सारांश', compTemp: 'तापमान का अंतर', compHum: 'उच्च नमी', compWind: 'तेज हवा', compSummary: 'समग्र सारांश', warmer: 'अधिक गर्म', cooler: 'अधिक ठंडा', same: 'समान तापमान', footer: '©2026 डेवलपर यहिया खैरी', userPrefix: 'उपयोगकर्ता: ', selectCountry: '-- देश चुनें --', selectCity: '-- शहर चुनें --', selectBoth: '-- कृपया दोनों शहरों का चयन करें --' },
+            'ko': { pageTitle: '📊 분할 화면 및 비교', backDash: '⬅ 대시보드', backSetup: '⚙ 설정', logout: '로그아웃', c1Title: '지역 1 (오른쪽)', c2Title: '지역 2 (왼쪽)', hum: '습도', wind: '풍속', vis: '가시성', uv: 'UV 지수', compTitle: '📋 비교 요약', compTemp: '온도 차이', compHum: '더 높은 습도', compWind: '더 강한 바람', compSummary: '전체 요약', warmer: '더 따뜻함', cooler: '더 시원함', same: '동일한 온도', footer: '©2026 개발자 Yahya Khairy', userPrefix: '사용자: ', selectCountry: '-- 국가 선택 --', selectCity: '-- 도시 선택 --', selectBoth: '-- 두 도시를 모두 선택하세요 --' },
+            'id': { pageTitle: '📊 Layar Terbagi & Perbandingan', backDash: '⬅ Dasbor', backSetup: '⚙ Pengaturan', logout: 'Keluar', c1Title: 'Wilayah 1 (Sisi Kanan)', c2Title: 'Wilayah 2 (Sisi Kiri)', hum: 'Kelembapan', wind: 'Kecepatan Angin', vis: 'Visibilitas', uv: 'Indeks UV', compTitle: '📋 Ringkasan Perbandingan', compTemp: 'Perbedaan Suhu', compHum: 'Kelembapan Lebih Tinggi', compWind: 'Angin Lebih Kencang', compSummary: 'Ringkasan Keseluruhan', warmer: 'lebih hangat sebesar', cooler: 'lebih dingin sebesar', same: 'Suhu sama', footer: '©2026 Pengembang Yahya Khairy', userPrefix: 'Pengguna: ', selectCountry: '-- Pilih Negara --', selectCity: '-- Pilih Kota --', selectBoth: '-- Silakan pilih kedua kota --' },
+            'ms': { pageTitle: '📊 Skrin Bahagi & Perbandingan', backDash: '⬅ Papan Pemuka', backSetup: '⚙ Tetapan', logout: 'Log Keluar', c1Title: 'Wilayah 1 (Sebelah Kanan)', c2Title: 'Wilayah 2 (Sebelah Kiri)', hum: 'Kelembapan', wind: 'Kelajuan Angin', vis: 'Keterlihatan', uv: 'Indeks UV', compTitle: '📋 Ringkasan Perbandingan', compTemp: 'Perbezaan Suhu', compHum: 'Kelembapan Lebih Tinggi', compWind: 'Angin Lebih Kencang', compSummary: 'Ringkasan Keseluruhan', warmer: 'lebih panas sebanyak', cooler: 'lebih sejuk sebanyak', same: 'Suhu sama', footer: '©2026 Pembangun Yahya Khairy', userPrefix: 'Pengguna: ', selectCountry: '-- Pilih Negara --', selectCity: '-- Pilih Bandar --', selectBoth: '-- Sila pilih kedua-dua bandar --' },
+            'vi': { pageTitle: '📊 Chia Màn Hình & So Sánh', backDash: '⬅ Bảng Điều Khiển', backSetup: '⚙ Cài Đặt', logout: 'Đăng Xuất', c1Title: 'Khu vực 1 (Bên Phải)', c2Title: 'Khu vực 2 (Bên Trái)', hum: 'Độ Ẩm', wind: 'Tốc Độ Gió', vis: 'Tầm Nhìn', uv: 'Chỉ Số UV', compTitle: '📋 Tóm Tắt So Sánh', compTemp: 'Chênh Lệch Nhiệt Độ', compHum: 'Độ Ẩm Cao Hơn', compWind: 'Gió Mạnh Hơn', compSummary: 'Tóm Tắt Tổng Thể', warmer: 'ấm hơn', cooler: 'mát hơn', same: 'Nhiệt độ bằng nhau', footer: '©2026 Nhà phát triển Yahya Khairy', userPrefix: 'Người dùng: ', selectCountry: '-- Chọn quốc gia --', selectCity: '-- Chọn thành phố --', selectBoth: '-- Vui lòng chọn cả hai thành phố --' },
+            'th': { pageTitle: '📊 แบ่งหน้าจอและการเปรียบเทียบ', backDash: '⬅ แดชบอร์ด', backSetup: '⚙ ตั้งค่า', logout: 'ออกจากระบบ', c1Title: 'ภูมิภาค 1 (ฝั่งขวา)', c2Title: 'ภูมิภาค 2 (ฝั่งซ้าย)', hum: 'ความชื้น', wind: 'ความเร็วลม', vis: 'ทัศนวิสัย', uv: 'ดัชนี UV', compTitle: '📋 สรุปการเปรียบเทียบ', compTemp: 'ความแตกต่างของอุณหภูมิ', compHum: 'ความชื้นสูงกว่า', compWind: 'ลมแรงกว่า', compSummary: 'สรุปภาพรวม', warmer: 'อุ่นกว่า', cooler: 'เย็นกว่า', same: 'อุณหภูมิเท่ากัน', footer: '©2026 นักพัฒนา Yahya Khairy', userPrefix: 'ผู้ใช้: ', selectCountry: '-- เลือกประเทศ --', selectCity: '-- เลือกเมือง --', selectBoth: '-- กรุณาเลือกทั้งสองเมือง --' },
+            'fa': { pageTitle: '📊 صفحه تقسیم شده و مقایسه', backDash: '⬅ داشبورد', backSetup: '⚙ تنظیمات', logout: 'خروج', c1Title: 'منطقه ۱ (سمت راست)', c2Title: 'منطقه ۲ (سمت چپ)', hum: 'رطوبت', wind: 'سرعت باد', vis: 'دید', uv: 'شاخص UV', compTitle: '📋 خلاصه مقایسه', compTemp: 'اختلاف دما', compHum: 'رطوبت بالاتر', compWind: 'باد شدیدتر', compSummary: 'خلاصه کلی', warmer: 'گرم‌تر به میزان', cooler: 'سردتر به میزان', same: 'دمای یکسان', footer: '©2026 توسعه دهنده یحیی خیری', userPrefix: 'کاربر: ', selectCountry: '-- کشور را انتخاب کنید --', selectCity: '-- شهر را انتخاب کنید --', selectBoth: '-- لطفا هر دو شهر را انتخاب کنید --' },
+            'sw': { pageTitle: '📊 Gawanya Skrini & Linganisha', backDash: '⬅ Dashibodi', backSetup: '⚙ Mipangilio', logout: 'Toka', c1Title: 'Eneo la 1 (Upande wa Kulia)', c2Title: 'Eneo la 2 (Upande wa Kushoto)', hum: 'Unyevu', wind: 'Kasi ya Upepo', vis: 'Uonekano', uv: 'Kielezo cha UV', compTitle: '📋 Muhtasari wa Ulinganisho', compTemp: 'Tofauti ya Joto', compHum: 'Unyevu wa Juu', compWind: 'Upepo Mkubwa', compSummary: 'Muhtasari wa Jumla', warmer: 'joto zaidi kwa', cooler: 'baridi zaidi kwa', same: 'Joto sawa', footer: '©2026 Mendeleza Yahya Khairy', userPrefix: 'Mtumiaji: ', selectCountry: '-- Chagua Nchi --', selectCity: '-- Chagua Mji --', selectBoth: '-- Tafadhali chagua miji yote miwili --' }
+        };
+
+        window.onload = function() {
+            const session = localStorage.getItem('sgl_current_session');
+            if(!session) { window.location.href = "index.html"; return; }
+            const settings = JSON.parse(localStorage.getItem(`sgl_settings_${session}`));
+            
+            if(settings) {
+                tempUnit = settings.unit || "C";
+                userLang = settings.language ? settings.language.code : "ar";
+            }
+
+            applyTranslation(userLang);
+            document.getElementById('userDisplay').innerText = (translations[userLang] || translations['en']).userPrefix + session;
+            populateCountryDropdowns();
+        };
+
+        function applyTranslation(lang) {
+            const t = translations[lang] || translations['en'];
+            document.getElementById('tr-page-title').innerText = t.pageTitle;
+            document.getElementById('tr-back-dash').innerText = t.backDash;
+            document.getElementById('tr-back-setup').innerText = t.backSetup;
+            document.getElementById('tr-logout').innerText = t.logout;
+            document.getElementById('tr-title-c1').innerText = t.c1Title;
+            document.getElementById('tr-title-c2').innerText = t.c2Title;
+            document.getElementById('tr-comp-title').innerText = t.compTitle;
+            document.getElementById('tr-comp-temp').innerText = t.compTemp;
+            document.getElementById('tr-comp-hum').innerText = t.compHum;
+            document.getElementById('tr-comp-wind').innerText = t.compWind;
+            document.getElementById('tr-comp-summary').innerText = t.compSummary;
+            document.getElementById('tr-footer').innerText = t.footer;
+
+            document.querySelectorAll('.lbl-hum').forEach(e => e.innerText = t.hum);
+            document.querySelectorAll('.lbl-wind').forEach(e => e.innerText = t.wind);
+            document.querySelectorAll('.lbl-vis').forEach(e => e.innerText = t.vis);
+            document.querySelectorAll('.lbl-uv').forEach(e => e.innerText = t.uv);
+
+            document.dir = (lang === 'ar' || lang === 'fa') ? 'rtl' : 'ltr';
+        }
+
+        function populateCountryDropdowns() {
+            const s1 = document.getElementById('countrySelect1');
+            const s2 = document.getElementById('countrySelect2');
+            const t = translations[userLang] || translations['en'];
+
+            s1.innerHTML = `<option value="">${t.selectCountry}</option>`;
+            s2.innerHTML = `<option value="">${t.selectCountry}</option>`;
+
+            for (let code in countryNamesDatabase) {
+                const opt1 = document.createElement('option');
+                opt1.value = code; 
+                opt1.innerText = `${code} - ${countryNamesDatabase[code].label.replace(':', '')}`;
+                s1.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = code; 
+                opt2.innerText = `${code} - ${countryNamesDatabase[code].label.replace(':', '')}`;
+                s2.appendChild(opt2);
+            }
+        }
+
+        function buildRegions(id, countryCode) {
+            const citySelect = document.getElementById(`citySelect${id}`);
+            const t = translations[userLang] || translations['en'];
+
+            if (!countryCode) {
+                citySelect.innerHTML = `<option value="">${t.selectCity}</option>`;
+                resetCard(id);
+                return;
+            }
+
+            const config = countryNamesDatabase[countryCode];
+            const dynamicLabel = config ? `-- ${config.label.replace(':', '')} --` : t.selectCity;
+            
+            citySelect.innerHTML = `<option value="">${dynamicLabel}</option>`;
+            config.cities.forEach(c => {
+                const o = document.createElement('option');
+                o.value = `${c},${countryCode}`;
+                o.innerText = c;
+                citySelect.appendChild(o);
+            });
+            resetCard(id);
+        }
+
+        function resetCard(id) {
+            const t = translations[userLang] || translations['en'];
+            document.getElementById(`c${id}-name`).innerText = t.selectCity;
+            document.getElementById(`c${id}-time`).innerText = "--";
+            document.getElementById(`c${id}-temp`).innerText = "--";
+            document.getElementById(`c${id}-icon`).src = "";
+            document.getElementById(`c${id}-cond`).innerText = "--";
+            document.getElementById(`c${id}-hum`).innerText = "--";
+            document.getElementById(`c${id}-wind`).innerText = "--";
+            document.getElementById(`c${id}-vis`).innerText = "--";
+            document.getElementById(`c${id}-uv`).innerText = "--";
+
+            if (id === 1) city1Data = null;
+            if (id === 2) city2Data = null;
+            updateComparison();
+        }
+
+        async function fetchWeather(id) {
+            const val = document.getElementById(`citySelect${id}`).value;
+            if(!val) {
+                resetCard(id);
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${val}&lang=${userLang}`);
+                const data = await res.json();
+                
+                if(id === 1) city1Data = data;
+                else city2Data = data;
+
+                renderCard(id, data);
+                updateComparison();
+            } catch(e) {
+                console.error("Error fetching weather:", e);
+            }
+        }
+
+        function renderCard(id, data) {
+            const c = data.current, l = data.location;
+            const temp = tempUnit === "C" ? c.temp_c : c.temp_f;
+            
+            document.getElementById(`c${id}-name`).innerText = `${l.name}, ${l.country}`;
+            document.getElementById(`c${id}-time`).innerText = l.localtime;
+            document.getElementById(`c${id}-temp`).innerText = `${temp}°${tempUnit}`;
+            document.getElementById(`c${id}-icon`).src = c.condition.icon;
+            document.getElementById(`c${id}-cond`).innerText = c.condition.text;
+            document.getElementById(`c${id}-hum`).innerText = c.humidity + '%';
+            document.getElementById(`c${id}-wind`).innerText = c.wind_kph + ' km/h';
+            document.getElementById(`c${id}-vis`).innerText = c.vis_km + ' km';
+            document.getElementById(`c${id}-uv`).innerText = c.uv;
+        }
+
+        function updateComparison() {
+            const t = translations[userLang] || translations['en'];
+
+            if(!city1Data || !city2Data) {
+                document.getElementById('res-temp-diff').innerText = "--";
+                document.getElementById('res-hum-diff').innerText = "--";
+                document.getElementById('res-wind-diff').innerText = "--";
+                document.getElementById('res-summary').innerText = t.selectBoth;
+                return;
+            }
+
+            const c1 = city1Data.current, c2 = city2Data.current;
+            const l1 = city1Data.location.name, l2 = city2Data.location.name;
+
+            const temp1 = tempUnit === "C" ? c1.temp_c : c1.temp_f;
+            const temp2 = tempUnit === "C" ? c2.temp_c : c2.temp_f;
+
+            // 1. Temperature Difference
+            const diffTemp = Math.abs(temp1 - temp2).toFixed(1);
+            if(temp1 > temp2) {
+                document.getElementById('res-temp-diff').innerText = `${l1} ${t.warmer} ${diffTemp}°${tempUnit}`;
+            } else if(temp2 > temp1) {
+                document.getElementById('res-temp-diff').innerText = `${l2} ${t.warmer} ${diffTemp}°${tempUnit}`;
+            } else {
+                document.getElementById('res-temp-diff').innerText = t.same;
+            }
+
+            // 2. Humidity Difference
+            if(c1.humidity > c2.humidity) {
+                document.getElementById('res-hum-diff').innerText = `${l1} (${c1.humidity}%)`;
+            } else if(c2.humidity > c1.humidity) {
+                document.getElementById('res-hum-diff').innerText = `${l2} (${c2.humidity}%)`;
+            } else {
+                document.getElementById('res-hum-diff').innerText = `(${c1.humidity}%)`;
+            }
+
+            // 3. Wind Speed Difference
+            if(c1.wind_kph > c2.wind_kph) {
+                document.getElementById('res-wind-diff').innerText = `${l1} (${c1.wind_kph} km/h)`;
+            } else if(c2.wind_kph > c1.wind_kph) {
+                document.getElementById('res-wind-diff').innerText = `${l2} (${c2.wind_kph} km/h)`;
+            } else {
+                document.getElementById('res-wind-diff').innerText = `(${c1.wind_kph} km/h)`;
+            }
+
+            // 4. Overall Summary
+            document.getElementById('res-summary').innerText = `${l1}: ${c1.condition.text} | ${l2}: ${c2.condition.text}`;
+        }
+
+        function logoutSystem() {
+            localStorage.removeItem('sgl_current_session');
+            localStorage.removeItem('sgl_current_user');
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
