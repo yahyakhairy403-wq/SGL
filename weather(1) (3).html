@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L91T00TK4K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L91T00TK4K');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGNAL - Weather Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #080c14; color: #f3f4f6; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow-x: hidden; position: relative; }
+        .bg-watermark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; font-size: 15vw; font-weight: 900; color: rgba(255, 255, 255, 0.01); user-select: none; pointer-events: none; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 50px; z-index: 1; text-transform: uppercase; }
+        .main-layout { display: flex; flex-direction: row; gap: 20px; max-width: 1400px; width: 95%; margin: 20px auto; z-index: 2; flex: 1; }
+        .sidebar-vertical { width: 320px; background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar-title { font-size: 18px; font-weight: bold; color: #3b82f6; border-bottom: 1px solid #1f2937; padding-bottom: 10px; text-align: center; }
+        .country-select-box { display: flex; flex-direction: column; gap: 8px; }
+        .country-select-box select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: #1f2937; color: white; font-size: 15px; cursor: pointer; outline: none; }
+        .region-zone { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .region-zone label { font-size: 14px; color: #9ca3af; font-weight: bold; }
+        .region-zone select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: #1f2937; color: #10b981; font-size: 15px; cursor: pointer; outline: none; }
+        .content-area { flex: 1; background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.05); padding: 30px; display: flex; flex-direction: column; gap: 25px; min-height: 600px; justify-content: center; position: relative; }
+        .welcome-msg { text-align: center; color: #6b7280; font-size: 20px; }
+        .weather-dashboard { display: none; animation: fadeIn 0.6s ease; }
+        .dash-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2937; padding-bottom: 15px; }
+        .dash-title h1 { font-size: 32px; color: #fff; font-weight: 800; }
+        .dash-title p { color: #9ca3af; font-size: 14px; margin-top: 5px; }
+        .main-temp-section { display: flex; align-items: center; justify-content: center; gap: 40px; margin: 30px 0; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.02); }
+        .big-temp { font-size: 96px; font-weight: 900; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .weather-status-box { text-align: right; }
+        .weather-status-box img { width: 80px; height: 80px; }
+        .status-text { font-size: 24px; font-weight: bold; color: #3b82f6; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+        .feature-item { background: #111827; border: 1px solid #1f2937; padding: 20px; border-radius: 12px; text-align: center; transition: 0.3s; }
+        .feature-item:hover { border-color: #3b82f6; transform: translateY(-3px); }
+        .feature-item span { display: block; font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
+        .feature-item strong { font-size: 20px; color: #fff; }
+        .forecast-section { margin-top: 30px; }
+        .forecast-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #10b981; }
+        .forecast-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
+        .forecast-card { min-width: 130px; flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; text-align: center; }
+        .forecast-card .day-name { font-size: 14px; font-weight: bold; color: #9ca3af; }
+        .forecast-card img { width: 50px; height: 50px; margin: 5px 0; }
+        .forecast-card .forecast-temp { font-size: 16px; font-weight: bold; color: #fff; }
+        .top-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; flex-wrap: wrap; }
+        .btn-alert { background: #1f2937; border: 1px solid #374151; color: #f3f4f6; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .btn-alert.active { background: #dc2626; border-color: #ef4444; }
+        .btn-compare { background: #1f2937; border: 1px solid #374151; color: #f3f4f6; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .btn-compare:hover { background: #10b981; border-color: #059669; }
+        .btn-compare.active { background: #10b981; border-color: #059669; }
+        .footer-nav { display: flex; justify-content: space-between; padding-top: 20px; border-top: 1px solid #1f2937; margin-top: auto; }
+        .btn-link { background: #374151; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 13px; transition: 0.3s; }
+        .btn-link:hover { background: #4b5563; }
+        .btn-danger { background: #991b1b; border: none; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+        footer { background-color: #000000; text-align: center; padding: 15px; font-size: 14px; color: #9ca3af; border-top: 1px solid #111827; z-index: 2; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        
+	        @media(max-width: 900px) { 
+	            .main-layout { flex-direction: column; } 
+	            .sidebar-vertical { width: 100%; } 
+	        }
+	        @media(max-width: 600px) {
+	            .content-area { padding: 15px; }
+	        }
+    </style>
+</head>
+<body>
+    <div class="bg-watermark"><span>SIGNAL</span></div>
+    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <div class="main-layout">
+        <div class="sidebar-vertical">
+            <div class="sidebar-title" id="tr-side-title">تخصيص النطاق الجغرافي</div>
+            <div class="country-select-box">
+                <label style="font-size: 14px; color: #9ca3af;" id="tr-country-label">اختر الدولة:</label>
+                <select id="countrySelect" onchange="onCountryChange(this.value)">
+    <option value="EG">🇪🇬 Egypt</option>
+    <option value="SA">🇸🇦 Saudi Arabia</option>
+    <option value="AE">🇦🇪 United Arab Emirates</option>
+    <option value="JO">🇯🇴 Jordan</option>
+    <option value="MA">🇲🇦 Morocco</option>
+    <option value="DZ">🇩🇿 Algeria</option>
+    <option value="KW">🇰🇼 Kuwait</option>
+    <option value="QA">🇶🇦 Qatar</option>
+    <option value="US">🇺🇸 United States of America</option>
+    <option value="GB">🇬🇧 United Kingdom</option>
+    <option value="FR">🇫🇷 France</option>
+    <option value="DE">🇩🇪 Germany</option>
+    <option value="TR">🇹🇷 Turkey</option>
+    <option value="ES">🇪🇸 Spain</option>
+    <option value="CN">🇨🇳 China</option>
+    <option value="JP">🇯🇵 Japan</option>
+    <option value="ZA">🇿🇦 South Africa</option>
+    <option value="NG">🇳🇬 Nigeria</option>
+    <option value="KE">🇰🇪 Kenya</option>
+    <option value="GH">🇬🇭 Ghana</option>
+    <option value="ET">🇪🇹 Ethiopia</option>
+    <option value="TN">🇹🇳 Tunisia</option>
+    <option value="LY">🇱🇾 Libya</option>
+    <option value="SD">🇸🇩 Sudan</option>
+    <option value="SN">🇸🇳 Senegal</option>
+    <option value="UG">🇺🇬 Uganda</option>
+    <option value="TZ">🇹🇿 Tanzania</option>
+    <option value="ZW">🇿🇼 Zimbabwe</option>
+    <option value="CM">🇨🇲 Cameroon</option>
+    <option value="CI">🇨🇮 Ivory Coast</option>
+    <option value="AO">🇦🇴 Angola</option>
+    <option value="MZ">🇲🇿 Mozambique</option>
+    <option value="MG">🇲🇬 Madagascar</option>
+    <option value="BF">🇧🇫 Burkina Faso</option>
+    <option value="ML">🇲🇱 Mali</option>
+    <option value="NE">🇳🇪 Niger</option>
+    <option value="IT">🇮🇹 Italy</option>
+    <option value="NL">🇳🇱 Netherlands</option>
+    <option value="SE">🇸🇪 Sweden</option>
+    <option value="NO">🇳🇴 Norway</option>
+    <option value="CH">🇨🇭 Switzerland</option>
+    <option value="AT">🇦🇹 Austria</option>
+    <option value="BE">🇧🇪 Belgium</option>
+    <option value="PT">🇵🇹 Portugal</option>
+    <option value="PL">🇵🇱 Poland</option>
+    <option value="GR">🇬🇷 Greece</option>
+    <option value="DK">🇩🇰 Denmark</option>
+    <option value="FI">🇫🇮 Finland</option>
+    <option value="IE">🇮🇪 Ireland</option>
+    <option value="CZ">🇨🇿 Czech Republic</option>
+    <option value="HU">🇭🇺 Hungary</option>
+    <option value="IN">🇮🇳 India</option>
+    <option value="KR">🇰🇷 South Korea</option>
+    <option value="SG">🇸🇬 Singapore</option>
+    <option value="MY">🇲🇾 Malaysia</option>
+    <option value="ID">🇮🇩 Indonesia</option>
+    <option value="PK">🇵🇰 Pakistan</option>
+    <option value="BD">🇧🇩 Bangladesh</option>
+    <option value="PH">🇵🇭 Philippines</option>
+    <option value="VN">🇻🇳 Vietnam</option>
+    <option value="TH">🇹🇭 Thailand</option>
+    <option value="IR">🇮🇷 Iran</option>
+    <option value="IQ">🇮🇶 Iraq</option>
+    <option value="LB">🇱🇧 Lebanon</option>
+    <option value="SY">🇸🇾 Syria</option>
+    <option value="OM">🇴🇲 Oman</option>
+    <option value="CA">🇨🇦 Canada</option>
+    <option value="BR">🇧🇷 Brazil</option>
+    <option value="AR">🇦🇷 Argentina</option>
+    <option value="MX">🇲🇽 Mexico</option>
+    <option value="CO">🇨🇴 Colombia</option>
+    <option value="CL">🇨🇱 Chile</option>
+    <option value="PE">🇵🇪 Peru</option>
+    <option value="VE">🇻🇪 Venezuela</option>
+    <option value="AU">🇦🇺 Australia</option>
+</select>
+            </div>
+            <div class="region-zone">
+                <label id="regionLabel" for="regionSelect">اختر المحافظة:</label>
+                <select id="regionSelect" onchange="getDashboardWeatherData(this.value)"></select>
+            </div>
+        </div>
+        <div class="content-area">
+            <div class="top-controls">
+                <div id="userDisplay" style="font-size: 13px; color:#9ca3af;">User: Guest</div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="split.html" class="btn-compare" id="tr-compare-btn" style="text-decoration: none;">📊 التقسيم والمقارنه</a>
+                    <button class="btn-alert" id="alertBtn" onclick="toggleAlerts()">🔔 تنبيه الإشارات والتقلبات</button>
+                </div>
+            </div>
+            <div id="welcomeMessage" class="welcome-msg">
+                <p id="tr-welcome">مرحباً بك في نظام لوحة التحكم SIGNAL.</p>
+                <p style="font-size: 15px; margin-top: 10px; color:#4b5563;" id="tr-welcome-sub">الرجاء اختيار المنطقة لعرض التقرير.</p>
+            </div>
+            <div class="weather-dashboard" id="weatherDashboard">
+                <div class="dash-header"><div class="dash-title"><h1 id="detLocation">--</h1><p id="detTime">--</p></div></div>
+                <div class="main-temp-section">
+                    <div class="big-temp" id="detTemp">--</div>
+                    <div class="weather-status-box"><img id="detIcon" src=""><div class="status-text" id="detCondition">--</div></div>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-item"><span id="tr-humidity">نسبة الرطوبة</span><strong id="detHumidity">--</strong></div>
+                    <div class="feature-item"><span id="tr-wind">سرعة الرياح</span><strong id="detWind">--</strong></div>
+                    <div class="feature-item"><span id="tr-visibility">الرؤية</span><strong id="detVisibility">--</strong></div>
+                    <div class="feature-item"><span id="tr-uv">الأشعة UV</span><strong id="detUV">--</strong></div>
+                </div>
+                <div class="forecast-section">
+                    <div class="forecast-title" id="tr-forecast-title">التوقعات المستقبلية</div>
+                    <div class="forecast-container" id="forecastContainer"></div>
+                </div>
+            </div>
+            
+            
+            <div class="footer-nav">
+                <a href="setup.html" class="btn-link" id="tr-back-setup">⬅ العودة للإعدادات</a>
+                <button class="btn-danger" id="tr-logout" onclick="logoutSystem()">تسجيل الخروج</button>
+            </div>
+        </div>
+    </div>
+    <footer id="tr-footer">©2026 Developer Yahia Khairy</footer>
+    <script>
+        const apiKey = "45ca785dde6c48f7846114104263107";
+        let tempUnit = "C", userLang = "ar", isAlertOn = false, lastTemp = "", lastCond = "";
+
+        const translations = {
+    'ar': { 
+        sideTitle: 'تخصيص الموقع', 
+        countryLabel: 'اختر الدولة:', 
+        cityLabel: 'اختر المحافظة:',
+        welcome: 'مرحباً بك في نظام لوحة تحكم SIGNAL.', 
+        welcomeSub: 'الرجاء اختيار منطقة لعرض التقرير.', 
+        humidity: 'الرطوبة', 
+        wind: 'سرعة الرياح', 
+        visibility: 'الرؤية', 
+        uv: 'مؤشر الأشعة فوق البنفسجية', 
+        forecast: 'التنبؤات القادمة', 
+        backSetup: '⬅ العودة للإعدادات', 
+        logout: 'تسجيل الخروج الآمن', 
+        alertBtn: '🔔 إشعارات التنبيهات',
+        alertOn: '🔔 التنبيهات مفعلة', 
+alertOff: '🔔 تنبيهات الطقس', 
+	        userPrefix: 'المستخدم النشط: ', 
+	        updatePrefix: 'آخر تحديث: ', 
+	        windUnit: ' كم/س', 
+	        visUnit: ' كم',
+	        compareBtn: '📊 التقسيم والمقارنه'
+	    },
+    'en': { 
+        sideTitle: 'Location Customization', 
+        countryLabel: 'Select Country:', 
+        cityLabel: 'Select City:',
+        welcome: 'Welcome to the SIGNAL Dashboard System.', 
+        welcomeSub: 'Please select a region to view the report.', 
+        humidity: 'Humidity', 
+        wind: 'Wind Speed', 
+        visibility: 'Visibility', 
+        uv: 'UV Index', 
+        forecast: 'Upcoming Forecast', 
+        backSetup: '⬅ Back to Setup', 
+        logout: 'Secure Logout', 
+        alertBtn: '🔔 Alert Notifications',
+        alertOn: '🔔 Alerts Active', 
+alertOff: '🔔 Weather Alerts', 
+	        userPrefix: 'Active User: ', 
+	        updatePrefix: 'Last Update: ', 
+	        windUnit: ' km/h', 
+	        visUnit: ' km',
+	        compareBtn: '📊 Split and Compare'
+	    },
+    'fr': { 
+        sideTitle: 'Personnalisation de l\'emplacement', 
+        countryLabel: 'Sélectionner le pays:', 
+        cityLabel: 'Choisir la ville:',
+        welcome: 'Bienvenue dans le système de tableau de bord SIGNAL.', 
+        welcomeSub: 'Veuillez sélectionner une région pour afficher le rapport.', 
+        humidity: 'Humidité', 
+        wind: 'Vitesse du vent', 
+        visibility: 'Visibilité', 
+        uv: 'Indice UV', 
+        forecast: 'Prévisions à venir', 
+        backSetup: '⬅ Retour à la configuration', 
+        logout: 'Déconnexion sécurisée', 
+        alertBtn: '🔔 Notifications d\'alerte',
+        alertOn: '🔔 Alertes actives', 
+        alertOff: '🔔 Alertes météorologiques', 
+        userPrefix: 'Utilisateur actif: ', 
+        updatePrefix: 'Dernière mise à jour: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Diviser et Comparer'
+	    },
+    'es': { 
+        sideTitle: 'Personalización de Ubicación', 
+        countryLabel: 'Seleccionar país:', 
+        cityLabel: 'Seleccionar ciudad:',
+        welcome: 'Bienvenido al Sistema de Panel SIGNAL.', 
+        welcomeSub: 'Por favor seleccione una región para ver el informe.', 
+        humidity: 'Humedad', 
+        wind: 'Velocidad del viento', 
+        visibility: 'Visibilidad', 
+        uv: 'Índice UV', 
+        forecast: 'Pronóstico Próximo', 
+        backSetup: '⬅ Volver a Configuración', 
+        logout: 'Cerrar Sesión Segura', 
+        alertBtn: '🔔 Notificaciones de Alerta',
+        alertOn: '🔔 Alertas activas', 
+        alertOff: '🔔 Alertas meteorológicas', 
+        userPrefix: 'Usuario activo: ', 
+        updatePrefix: 'Última actualización: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Dividir y Comparar'
+	    },
+    'de': { 
+        sideTitle: 'Standortanpassung', 
+        countryLabel: 'Land auswählen:', 
+        cityLabel: 'Stadt auswählen:',
+        welcome: 'Willkommen beim SIGNAL Dashboard System.', 
+        welcomeSub: 'Bitte wählen Sie eine Region, um den Bericht anzuzeigen.', 
+        humidity: 'Luftfeuchtigkeit', 
+        wind: 'Windgeschwindigkeit', 
+        visibility: 'Sichtweite', 
+        uv: 'UV-Index', 
+        forecast: 'Kommende Vorhersage', 
+        backSetup: '⬅ Zurück zur Einrichtung', 
+        logout: 'Sichere Abmeldung', 
+        alertBtn: '🔔 Alarmbenachrichtigungen',
+        alertOn: '🔔 Alarme aktiv', 
+        alertOff: '🔔 Wetterwarnungen', 
+        userPrefix: 'Aktiver Benutzer: ', 
+        updatePrefix: 'Letzte Aktualisierung: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Teilen und Vergleichen'
+	    },
+    'tr': { 
+        sideTitle: 'Konum Özelleştirme', 
+        countryLabel: 'Ülke Seçin:', 
+        cityLabel: 'Şehir Seçin:',
+        welcome: 'SIGNAL Gösterge Paneli Sistemine Hoş Geldiniz.', 
+        welcomeSub: 'Raporu görüntülemek için bir bölge seçin.', 
+        humidity: 'Nem', 
+        wind: 'Rüzgar Hızı', 
+        visibility: 'Görüş Mesafesi', 
+        uv: 'UV İndeksi', 
+        forecast: 'Gelecek Tahmin', 
+        backSetup: '⬅ Kuruluma Geri Dön', 
+        logout: 'Güvenli Çıkış', 
+        alertBtn: '🔔 Uyarı Bildirimleri',
+        alertOn: '🔔 Uyarılar Aktif', 
+        alertOff: '🔔 Hava Durumu Uyarıları', 
+        userPrefix: 'Aktif Kullanıcı: ', 
+        updatePrefix: 'Son Güncelleme: ', 
+        windUnit: ' km/s', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Böl ve Karşılaştır'
+	    },
+    'zh': { 
+        sideTitle: '位置定制', 
+        countryLabel: '选择国家:', 
+        cityLabel: '选择城市:',
+        welcome: '欢迎使用 SIGNAL 仪表板系统。', 
+        welcomeSub: '请选择一个区域以查看报告。', 
+        humidity: '湿度', 
+        wind: '风速', 
+        visibility: '能见度', 
+        uv: '紫外线指数', 
+        forecast: '未来预报', 
+        backSetup: '⬅ 返回设置', 
+        logout: '安全退出', 
+        alertBtn: '🔔 警报通知',
+        alertOn: '🔔 警报已激活', 
+        alertOff: '🔔 天气警报', 
+        userPrefix: '活动用户: ', 
+        updatePrefix: '最后更新: ', 
+        windUnit: ' 公里/小时', 
+        visUnit: ' 公里' 
+    ,
+	        compareBtn: '📊 分割与比较'
+	    },
+    'ja': { 
+        sideTitle: 'ロケーションのカスタマイズ', 
+        countryLabel: '国を選択:', 
+        cityLabel: '都市を選択:',
+        welcome: 'SIGNAL ダッシュボードシステムへようこそ。', 
+        welcomeSub: 'レポートを表示する地域を表示してください。', 
+        humidity: '湿度', 
+        wind: '風速', 
+        visibility: '視程', 
+        uv: 'UV指数', 
+        forecast: '今後の予報', 
+        backSetup: '⬅ 設定に戻る', 
+        logout: 'ログアウト', 
+        alertBtn: '🔔 アラート通知',
+        alertOn: '🔔 アラートが有効です', 
+        alertOff: '🔔 天気アラート', 
+        userPrefix: 'アクティブユーザー: ', 
+        updatePrefix: '最終更新: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 分割と比較'
+	    },
+    'it': { 
+        sideTitle: 'Personalizzazione della Posizione', 
+        countryLabel: 'Seleziona Paese:', 
+        cityLabel: 'Seleziona Città:',
+        welcome: 'Benvenuto nel Sistema Dashboard SIGNAL.', 
+        welcomeSub: 'Seleziona una regione per visualizzare il rapporto.', 
+        humidity: 'Umidità', 
+        wind: 'Velocità del vento', 
+        visibility: 'Visibilità', 
+        uv: 'Indice UV', 
+        forecast: 'Previsioni Future', 
+        backSetup: '⬅ Torna alle Impostazioni', 
+        logout: 'Disconnessione Sicura', 
+        alertBtn: '🔔 Notifiche di Allerta',
+        alertOn: '🔔 Allerte attive', 
+        alertOff: '🔔 Allerte meteo', 
+        userPrefix: 'Utente attivo: ', 
+        updatePrefix: 'Ultimo aggiornamento: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Dividi e Confronta'
+	    },
+    'nl': { 
+        sideTitle: 'Locatie Aanpassing', 
+        countryLabel: 'Selecteer Land:', 
+        cityLabel: 'Selecteer Stad:',
+        welcome: 'Welkom bij het SIGNAL Dashboard Systeem.', 
+        welcomeSub: 'Selecteer een regio om het rapport te bekijken.', 
+        humidity: 'Luchtvochtigheid', 
+        wind: 'Windsnelheid', 
+        visibility: 'Zichtbaarheid', 
+        uv: 'UV-index', 
+        forecast: 'Komende Voorspelling', 
+        backSetup: '⬅ Terug naar Instellingen', 
+        logout: 'Veilig Uitloggen', 
+        alertBtn: '🔔 Alarmmeldingen',
+        alertOn: '🔔 Waarschuwingen Actief', 
+        alertOff: '🔔 Weerwaarschuwingen', 
+        userPrefix: 'Actieve Gebruiker: ', 
+        updatePrefix: 'Laatste Update: ', 
+        windUnit: ' km/u', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Splitsen en Vergelijken'
+	    },
+    'sv': { 
+        sideTitle: 'Platsanpassning', 
+        countryLabel: 'Välj Land:', 
+        cityLabel: 'Välj Stad:',
+        welcome: 'Välkommen till SIGNAL Dashboard-systemet.', 
+        welcomeSub: 'Välj en region för att se rapporten.', 
+        humidity: 'Fuktighet', 
+        wind: 'Vindhastighet', 
+        visibility: 'Sikt', 
+        uv: 'UV-index', 
+        forecast: 'Kommande Prognos', 
+        backSetup: '⬅ Tillbaka till Inställningar', 
+        logout: 'Säker Utloggning', 
+        alertBtn: '🔔 Alarmnotiser',
+        alertOn: '🔔 Larm Aktiva', 
+        alertOff: '🔔 Väderlarm', 
+        userPrefix: 'Aktiv Användare: ', 
+        updatePrefix: 'Senaste Uppdatering: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Dela och Jämför'
+	    },
+    'no': { 
+        sideTitle: 'Stedstilpasning', 
+        countryLabel: 'Velg Land:', 
+        cityLabel: 'Velg By:',
+        welcome: 'Velkommen til SIGNAL Dashboard-systemet.', 
+        welcomeSub: 'Vennligst velg en region for å se rapporten.', 
+        humidity: 'Fuktighet', 
+        wind: 'Vindhastighet', 
+        visibility: 'Sikt', 
+        uv: 'UV-indeks', 
+        forecast: 'Kommende Prognose', 
+        backSetup: '⬅ Tilbake til Oppsett', 
+        logout: 'Sikker Ulogging', 
+        alertBtn: '🔔 Varslingsmeldinger',
+        alertOn: '🔔 Varsler Aktive', 
+        alertOff: '🔔 Værvarsler', 
+        userPrefix: 'Aktiv Bruker: ', 
+        updatePrefix: 'Sist Oppdatert: ', 
+        windUnit: ' km/t', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Del og Sammenlign'
+	    },
+    'pt': { 
+        sideTitle: 'Personalização de Localização', 
+        countryLabel: 'Selecionar País:', 
+        cityLabel: 'Selecionar Cidade:',
+        welcome: 'Bem-vindo ao Sistema de Painel SIGNAL.', 
+        welcomeSub: 'Selecione uma região para visualizar o relatório.', 
+        humidity: 'Umidade', 
+        wind: 'Velocidade do Vento', 
+        visibility: 'Visibilidade', 
+        uv: 'Índice UV', 
+        forecast: 'Previsão Futura', 
+        backSetup: '⬅ Voltar para Configurações', 
+        logout: 'Sair com Segurança', 
+        alertBtn: '🔔 Notificações de Alerta',
+        alertOn: '🔔 Alertas Ativos', 
+        alertOff: '🔔 Alertas Meteorológicos', 
+        userPrefix: 'Usuário ativo: ', 
+        updatePrefix: 'Última atualização: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Dividir e Comparar'
+	    },
+    'pl': { 
+        sideTitle: 'Dostosowanie Lokalizacji', 
+        countryLabel: 'Wybierz Kraj:', 
+        cityLabel: 'Wybierz Miasto:',
+        welcome: 'Witamy w Systemie Panelu SIGNAL.', 
+        welcomeSub: 'Wybierz region, aby wyświetlić raport.', 
+        humidity: 'Wilgotność', 
+        wind: 'Prędkość wiatru', 
+        visibility: 'Widoczność', 
+        uv: 'Indeks UV', 
+        forecast: 'Nadchodząca Prognoza', 
+        backSetup: '⬅ Powrót do Konfiguracji', 
+        logout: 'Bezpieczne Wylogowanie', 
+        alertBtn: '🔔 Powiadomienia Alarmowe',
+        alertOn: '🔔 Alarmy Aktywne', 
+        alertOff: '🔔 Ostrzeżenia Pogodowe', 
+        userPrefix: 'Aktywny Użytkownik: ', 
+        updatePrefix: 'Ostatnia Aktualizacja: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Podziel i Porównaj'
+	    },
+    'el': { 
+        sideTitle: 'Προσαρμογή Τοποθεσίας', 
+        countryLabel: 'Επιλέξτε Χώρα:', 
+        cityLabel: 'Επιλέξτε Πόλη:',
+        welcome: 'Καλώς ήρθατε στο Σύστημα Πίνακα Ελέγχου SIGNAL.', 
+        welcomeSub: 'Επιλέξτε μια περιοχή για να δείτε την αναφορά.', 
+        humidity: 'Υγρασία', 
+        wind: 'Ταχύτητα Ανέμου', 
+        visibility: 'Ορατότητα', 
+        uv: 'Δείκτης UV', 
+        forecast: 'Επερχόμενη Πρόγνωση', 
+        backSetup: '⬅ Επιστροφή στις Ρυθμίσεις', 
+        logout: 'Ασφαλής Αποσύνδεση', 
+        alertBtn: '🔔 Ειδοποιήσεις Συναγερμού',
+        alertOn: '🔔 Ενεργοί Συναγερμοί', 
+        alertOff: '🔔 Καιρικές Προειδοποιήσεις', 
+        userPrefix: 'Ενεργός Χρήστης: ', 
+        updatePrefix: 'Τελευταία Ενημέρωση: ', 
+        windUnit: ' χλμ/ώρα', 
+        visUnit: ' χλμ' 
+    ,
+	        compareBtn: '📊 Διαχωρισμός και Σύγκριση'
+	    },
+    'da': { 
+        sideTitle: 'Stedstilpasning', 
+        countryLabel: 'Vælg Land:', 
+        cityLabel: 'Vælg By:',
+        welcome: 'Velkommen til SIGNAL Dashboard-systemet.', 
+        welcomeSub: 'Vælg en region for at se rapporten.', 
+        humidity: 'Fugtighed', 
+        wind: 'Vindhastighed', 
+        visibility: 'Sigtbarhed', 
+        uv: 'UV-indeks', 
+        forecast: 'Kommende Prognose', 
+        backSetup: '⬅ Tilbage til Opsætning', 
+        logout: 'Sikker Log Ud', 
+        alertBtn: '🔔 Alarmenotifikationer',
+        alertOn: '🔔 Advarsler Aktive', 
+        alertOff: '🔔 Vejradvarsler', 
+        userPrefix: 'Aktiv Bruger: ', 
+        updatePrefix: 'Seneste Opdatering: ', 
+        windUnit: ' km/t', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Del og Sammenlign'
+	    },
+    'fi': { 
+        sideTitle: 'Sijainnin Mukauttaminen', 
+        countryLabel: 'Valitse Maa:', 
+        cityLabel: 'Valitse Kaupunki:',
+        welcome: 'Tervetuloa SIGNAL Kojelaudan Järjestelmään.', 
+        welcomeSub: 'Valitse alue nähdäksesi raportin.', 
+        humidity: 'Kosteus', 
+        wind: 'Tuulen Nopeus', 
+        visibility: 'Näkyvyys', 
+        uv: 'UV-indeksi', 
+        forecast: 'Tuleva Ennuste', 
+        backSetup: '⬅ Takaisin Asetuksiin', 
+        logout: 'Turvallinen Uloskirjautuminen', 
+        alertBtn: '🔔 Hälytysilmoitukset',
+        alertOn: '🔔 Hälytykset Aktiivisia', 
+        alertOff: '🔔 Säävaroitukset', 
+        userPrefix: 'Aktiivinen Käyttäjä: ', 
+        updatePrefix: 'Viimeisin Päivitys: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Jaa ja Vertaile'
+	    },
+    'hi': { 
+        sideTitle: 'स्थान अनुकूलन', 
+        countryLabel: 'देश चुनें:', 
+        cityLabel: 'शहर चुनें:',
+        welcome: 'SIGNAL डैशबोर्ड सिस्टम में आपका स्वागत है।', 
+        welcomeSub: 'रिपोर्ट देखने के लिए कृपया एक क्षेत्र चुनें।', 
+        humidity: 'नमी', 
+        wind: 'हवा की गति', 
+        visibility: 'दृश्यता', 
+        uv: 'यूवी सूचकांक', 
+        forecast: 'आगामी पूर्वानुमान', 
+        backSetup: '⬅ सेटअप पर वापस जाएं', 
+        logout: 'सुरक्षित लॉगआउट', 
+        alertBtn: '🔔 अलर्ट सूचनाएं',
+        alertOn: '🔔 अलर्ट सक्रिय', 
+        alertOff: '🔔 मौसम अलर्ट', 
+        userPrefix: 'सक्रिय उपयोगकर्ता: ', 
+        updatePrefix: 'अंतिम अपडेट: ', 
+        windUnit: ' किमी/घंटा', 
+        visUnit: ' किमी' 
+    ,
+	        compareBtn: '📊 विभाजित करें और तुलना करें'
+	    },
+    'ko': { 
+        sideTitle: '위치 사용자 정의', 
+        countryLabel: '국가 선택:', 
+        cityLabel: '도시 선택:',
+        welcome: 'SIGNAL 대시보드 시스템에 오신 것을 환영합니다.', 
+        welcomeSub: '보고서를 보려면 지역을 선택하세요.', 
+        humidity: '습도', 
+        wind: '풍속', 
+        visibility: '가시성', 
+        uv: 'UV 지수', 
+        forecast: '향후 예보', 
+        backSetup: '⬅ 설정으로 돌아가기', 
+        logout: '안전한 로그아웃', 
+        alertBtn: '🔔 알림 알림',
+        alertOn: '🔔 알림 활성화', 
+        alertOff: '🔔 날씨 알림', 
+        userPrefix: '활성 사용자: ', 
+        updatePrefix: '마지막 업데이트: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 분할 및 비교'
+	    },
+    'id': { 
+        sideTitle: 'Kustomisasi Lokasi', 
+        countryLabel: 'Pilih Negara:', 
+        cityLabel: 'Pilih Kota:',
+        welcome: 'Selamat Datang di Sistem Dasbor SIGNAL.', 
+        welcomeSub: 'Silakan pilih wilayah untuk melihat laporan.', 
+        humidity: 'Kelembapan', 
+        wind: 'Kecepatan Angin', 
+        visibility: 'Visibilitas', 
+        uv: 'Indeks UV', 
+        forecast: 'Prakiraan Mendatang', 
+        backSetup: '⬅ Kembali ke Pengaturan', 
+        logout: 'Keluar dengan Aman', 
+        alertBtn: '🔔 Notifikasi Peringatan',
+        alertOn: '🔔 Peringatan Aktif', 
+        alertOff: '🔔 Peringatan Cuaca', 
+        userPrefix: 'Pengguna Aktif: ', 
+        updatePrefix: 'Pembaruan Terakhir: ', 
+        windUnit: ' km/jam', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Bagi dan Bandingkan'
+	    },
+    'ms': { 
+        sideTitle: 'Penyesuaian Lokasi', 
+        countryLabel: 'Pilih Negara:', 
+        cityLabel: 'Pilih Bandar:',
+        welcome: 'Selamat Datang ke Sistem Papan Pemuka SIGNAL.', 
+        welcomeSub: 'Sila pilih wilayah untuk melihat laporan.', 
+        humidity: 'Kelembapan', 
+        wind: 'Kelajuan Angin', 
+        visibility: 'Keterlihatan', 
+        uv: 'Indeks UV', 
+        forecast: 'Ramalan Akan Datang', 
+        backSetup: '⬅ Kembali ke Tetapan', 
+        logout: 'Log Keluar dengan Selamat', 
+        alertBtn: '🔔 Pemberitahuan Amaran',
+        alertOn: '🔔 Amaran Aktif', 
+        alertOff: '🔔 Amaran Cuaca', 
+        userPrefix: 'Pengguna Aktif: ', 
+        updatePrefix: 'Kemas Kini Terakhir: ', 
+        windUnit: ' km/j', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Bahagi dan Bandingkan'
+	    },
+    'vi': { 
+        sideTitle: 'Tùy chỉnh vị trí', 
+        countryLabel: 'Chọn quốc gia:', 
+        cityLabel: 'Chọn thành phố:',
+        welcome: 'Chào mừng đến với Hệ thống Bảng điều khiển SIGNAL.', 
+        welcomeSub: 'Vui lòng chọn một khu vực để xem báo cáo.', 
+        humidity: 'Độ ẩm', 
+        wind: 'Tốc độ gió', 
+        visibility: 'Tầm nhìn', 
+        uv: 'Chỉ số UV', 
+        forecast: 'Dự báo sắp tới', 
+        backSetup: '⬅ Quay lại Cài đặt', 
+        logout: 'Đăng xuất an toàn', 
+        alertBtn: '🔔 Thông báo cảnh báo',
+        alertOn: '🔔 Cảnh báo đang hoạt động', 
+        alertOff: '🔔 Cảnh báo thời tiết', 
+        userPrefix: 'Người dùng đang hoạt động: ', 
+        updatePrefix: 'Cập nhật lần cuối: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Chia và So sánh'
+	    },
+    'th': { 
+        sideTitle: 'การปรับแต่งตำแหน่ง', 
+        countryLabel: 'เลือกประเทศ:', 
+        cityLabel: 'เลือกเมือง:',
+        welcome: 'ยินดีต้อนรับสู่ระบบแดชบอร์ด SIGNAL', 
+        welcomeSub: 'โปรดเลือกภูมิภาคเพื่อดูรายงาน', 
+        humidity: 'ความชื้น', 
+        wind: 'ความเร็วลม', 
+        visibility: 'ทัศนวิสัย', 
+        uv: 'ดัชนี UV', 
+        forecast: 'พยากรณ์ล่วงหน้า', 
+        backSetup: '⬅ กลับไปที่การตั้งค่า', 
+        logout: 'ออกจากระบบอย่างปลอดภัย', 
+        alertBtn: '🔔 การแจ้งเตือน',
+        alertOn: '🔔 การแจ้งเตือนทำงานอยู่', 
+        alertOff: '🔔 การแจ้งเตือนสภาพอากาศ', 
+        userPrefix: 'ผู้ใช้ที่ใช้งาน: ', 
+        updatePrefix: 'อัปเดตล่าสุด: ', 
+        windUnit: ' กม./ชม.', 
+        visUnit: ' กม.' 
+    ,
+	        compareBtn: '📊 แบ่งและเปรียบเทียบ'
+	    },
+    'fa': { 
+        sideTitle: 'سفارشی سازی موقعیت', 
+        countryLabel: 'کشور را انتخاب کنید:', 
+        cityLabel: 'شهر را انتخاب کنید:',
+        welcome: 'به سیستم داشبورد SIGNAL خوش آمدید.', 
+        welcomeSub: 'لطفا یک منطقه را برای مشاهده گزارش انتخاب کنید.', 
+        humidity: 'رطوبت', 
+        wind: 'سرعت باد', 
+        visibility: 'دید', 
+        uv: 'شاخص UV', 
+        forecast: 'پیش بینی آینده', 
+        backSetup: '⬅ بازگشت به تنظیمات', 
+        logout: 'خروج امن', 
+        alertBtn: '🔔 اعلان های هشدار',
+        alertOn: '🔔 هشدارها فعال هستند', 
+        alertOff: '🔔 هشدارهای آب و هوا', 
+        userPrefix: 'کاربر فعال: ', 
+        updatePrefix: 'آخرین به روز رسانی: ', 
+        windUnit: ' کیلومتر/ساعت', 
+        visUnit: ' کیلومتر' 
+    ,
+	        compareBtn: '📊 تقسيم و مقايسه'
+	    },
+    'sw': { 
+        sideTitle: 'Ubinafsishaji wa Eneo', 
+        countryLabel: 'Chagua Nchi:', 
+        cityLabel: 'Chagua Mji:',
+        welcome: 'Karibu kwenye Mfumo wa Dashibodi ya SIGNAL.', 
+        welcomeSub: 'Tafadhali chagua eneo ili kuona ripoti.', 
+        humidity: 'Unyevu', 
+        wind: 'Kasi ya Upepo', 
+        visibility: 'Uonekano', 
+        uv: 'Kielezo cha UV', 
+        forecast: 'Utabiri Ujao', 
+        backSetup: '⬅ Rudi kwenye Mipangilio', 
+        logout: 'Toka kwa Usalama', 
+        alertBtn: '🔔 Arifa za Tahadhari',
+        alertOn: '🔔 Tahadhari Zinafanya Kazi', 
+        alertOff: '🔔 Tahadhari za Hali ya Hewa', 
+        userPrefix: 'Mtumiaji Aliye Hai: ', 
+        updatePrefix: 'Sasisho la Mwisho: ', 
+        windUnit: ' km/h', 
+        visUnit: ' km' 
+    ,
+	        compareBtn: '📊 Gawanya na Linganisha'
+	    }
+};
+
+        const countryNamesDatabase = {
+    "EG": { label: "اختر المحافظة:", cities: ["Cairo", "Alexandria", "Giza", "Port Said", "Luxor", "Aswan", "Sharqia", "Dakahlia", "Ismailia"] },
+    "SA": { label: "اختر المنطقة:", cities: ["Riyadh", "Makkah", "Madinah", "Jeddah", "Dammam", "Tabuk", "Abha", "Qassim"] },
+    "AE": { label: "اختر الإمارة:", cities: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah", "Al Ain"] },
+    "JO": { label: "اختر المحافظة:", cities: ["Amman", "Irbid", "Zarqa", "Aqaba", "Karak", "Mafraq", "Jerash"] },
+    "MA": { label: "اختر المدينة:", cities: ["Casablanca", "Rabat", "Marrakech", "Fes", "Tangier", "Agadir", "Oujda"] },
+    "DZ": { label: "اختر الولاية:", cities: ["Algiers", "Oran", "Constantine", "Annaba", "Setif", "Biskra", "Tlemcen"] },
+    "KW": { label: "اختر المنطقة:", cities: ["Kuwait City", "Hawalli", "Salmiya", "Farwaniya", "Ahmadi", "Jahra", "Fintas"] },
+    "QA": { label: "اختر المدينة:", cities: ["Doha", "Al Wakrah", "Al Khor", "Al Rayyan", "Umm Salal", "Al Shamal", "Al Daayen"] },
+    "US": { label: "Select State:", cities: ["New York", "California", "Texas", "Florida", "Illinois", "Washington", "Arizona"] },
+    "GB": { label: "Select City:", cities: ["London", "Manchester", "Birmingham", "Liverpool", "Glasgow", "Edinburgh", "Bristol"] },
+    "FR": { label: "Choisir la ville:", cities: ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Bordeaux", "Lille"] },
+    "DE": { label: "Stadt auswählen:", cities: ["Berlin", "München", "Hamburg", "Köln", "Frankfurt", "Stuttgart", "Düsseldorf"] },
+    "CN": { label: "Select City:", cities: ["Beijing", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu", "Wuhan", "Hangzhou"] },
+    "JP": { label: "Select City:", cities: ["Tokyo", "Osaka", "Kyoto", "Yokohama", "Nagoya", "Sapporo", "Fukuoka"] },
+    "TR": { label: "Şehir seçin:", cities: ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Gaziantep", "Konya"] },
+    "ES": { label: "Seleccionar ciudad:", cities: ["Madrid", "Barcelona", "Valencia", "Sevilla", "Málaga", "Bilbao", "Zaragoza"] },
+    "ZA": { label: "Select City:", cities: ["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth", "Bloemfontein", "East London"] },
+    "NG": { label: "Select City:", cities: ["Lagos", "Kano", "Ibadan", "Abuja", "Port Harcourt", "Benin City", "Kaduna"] },
+    "KE": { label: "Select City:", cities: ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika", "Malindi"] },
+    "GH": { label: "Select City:", cities: ["Accra", "Kumasi", "Tamale", "Sekondi-Takoradi", "Sunyani", "Cape Coast", "Obuasi"] },
+    "ET": { label: "Select City:", cities: ["Addis Ababa", "Dire Dawa", "Mekelle", "Gondar", "Hawassa", "Bahir Dar", "Jimma"] },
+    "TN": { label: "اختر الولاية:", cities: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte", "Gabes", "Ariana"] },
+    "LY": { label: "اختر المدينة:", cities: ["Tripoli", "Benghazi", "Misrata", "Al Bayda", "Sabha", "Zawiya", "Tobruk"] },
+    "SD": { label: "اختر المدينة:", cities: ["Khartoum", "Omdurman", "Port Sudan", "Kassala", "Gedaref", "Wad Madani", "Nyala"] },
+    "SN": { label: "Choisir la ville:", cities: ["Dakar", "Touba", "Thiès", "Saint-Louis", "Kaolack", "Ziguinchor", "Diourbel"] },
+    "UG": { label: "Select City:", cities: ["Kampala", "Gulu", "Lira", "Mbarara", "Jinja", "Mbale", "Soroti"] },
+    "TZ": { label: "Select City:", cities: ["Dar es Salaam", "Dodoma", "Mwanza", "Arusha", "Mbeya", "Morogoro", "Tanga"] },
+    "ZW": { label: "Select City:", cities: ["Harare", "Bulawayo", "Chitungwiza", "Mutare", "Gweru", "Kwekwe", "Kadoma"] },
+    "CM": { label: "Choisir la ville:", cities: ["Yaoundé", "Douala", "Bamenda", "Bafoussam", "Garoua", "Maroua", "Ngaoundéré"] },
+    "CI": { label: "Choisir la ville:", cities: ["Abidjan", "Bouaké", "Daloa", "Yamoussoukro", "San-Pédro", "Korhogo", "Man"] },
+    "AO": { label: "Selecionar cidade:", cities: ["Luanda", "Huambo", "Lobito", "Benguela", "Kuito", "Lubango", "Malanje"] },
+    "MZ": { label: "Selecionar cidade:", cities: ["Maputo", "Matola", "Beira", "Nampula", "Chimoio", "Nacala", "Quelimane"] },
+    "MG": { label: "Choisir la ville:", cities: ["Antananarivo", "Toamasina", "Antsirabe", "Mahajanga", "Toliara", "Fianarantsoa", "Antsiranana"] },
+    "BF": { label: "Choisir la ville:", cities: ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Ouahigouya", "Banfora", "Kaya", "Tenkodogo"] },
+    "ML": { label: "Choisir la ville:", cities: ["Bamako", "Sikasso", "Mopti", "Kayes", "Ségou", "Gao", "Tombouctou"] },
+    "NE": { label: "Choisir la ville:", cities: ["Niamey", "Zinder", "Maradi", "Agadez", "Tahoua", "Arlit", "Diffa"] },
+    "IT": { label: "Seleziona città:", cities: ["Roma", "Milano", "Napoli", "Torino", "Palermo", "Genova", "Bologna"] },
+    "NL": { label: "Selecteer stad:", cities: ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Eindhoven", "Tilburg", "Groningen"] },
+    "SE": { label: "Välj stad:", cities: ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås", "Örebro", "Linköping"] },
+    "NO": { label: "Velg by:", cities: ["Oslo", "Bergen", "Trondheim", "Stavanger", "Drammen", "Fredrikstad", "Kristiansand"] },
+    "CH": { label: "Stadt auswählen:", cities: ["Zürich", "Genf", "Basel", "Bern", "Lausanne", "Winterthur", "Luzern"] },
+    "AT": { label: "Stadt auswählen:", cities: ["Wien", "Graz", "Linz", "Salzburg", "Innsbruck", "Klagenfurt", "Villach"] },
+    "BE": { label: "Choisir la ville:", cities: ["Bruxelles", "Anvers", "Gand", "Charleroi", "Liège", "Bruges", "Namur"] },
+    "PT": { label: "Selecionar cidade:", cities: ["Lisboa", "Porto", "Vila Nova de Gaia", "Amadora", "Braga", "Coimbra", "Funchal"] },
+    "PL": { label: "Wybierz miasto:", cities: ["Warszawa", "Kraków", "Łódź", "Wrocław", "Poznań", "Gdańsk", "Szczecin"] },
+    "GR": { label: "Επιλέξτε πόλη:", cities: ["Αθήνα", "Θεσσαλονίκη", "Πάτρα", "Ηράκλειο", "Λάρισα", "Βόλος", "Ιωάννινα"] },
+    "DK": { label: "Vælg by:", cities: ["København", "Aarhus", "Odense", "Aalborg", "Esbjerg", "Randers", "Kolding"] },
+    "FI": { label: "Valitse kaupunki:", cities: ["Helsinki", "Espoo", "Tampere", "Vantaa", "Oulu", "Turku", "Jyväskylä"] },
+    "IE": { label: "Select City:", cities: ["Dublin", "Cork", "Limerick", "Galway", "Waterford", "Drogheda", "Dundalk"] },
+    "CZ": { label: "Vyberte město:", cities: ["Praha", "Brno", "Ostrava", "Plzeň", "Liberec", "Olomouc", "Ústí nad Labem"] },
+    "HU": { label: "Válasszon várost:", cities: ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pécs", "Győr", "Nyíregyháza"] },
+    "IN": { label: "Select City:", cities: ["Delhi", "Mumbai", "Bengaluru", "Hyderabad", "Ahmedabad", "Chennai", "Kolkata"] },
+    "KR": { label: "도시를 선택하세요:", cities: ["Seoul", "Busan", "Incheon", "Daegu", "Daejeon", "Gwangju", "Suwon"] },
+    "SG": { label: "Select City:", cities: ["Singapore", "Woodlands", "Tampines", "Jurong", "Hougang", "Bedok", "Ang Mo Kio"] },
+    "MY": { label: "Pilih Bandar:", cities: ["Kuala Lumpur", "George Town", "Ipoh", "Johor Bahru", "Shah Alam", "Malacca", "Petaling Jaya"] },
+    "ID": { label: "Pilih Kota:", cities: ["Jakarta", "Surabaya", "Bandung", "Medan", "Semarang", "Makassar", "Palembang"] },
+    "PK": { label: "شہر منتخب کریں:", cities: ["Karachi", "Lahore", "Faisalabad", "Rawalpindi", "Multan", "Peshawar", "Quetta"] },
+    "BD": { label: "শহর নির্বাচন করুন:", cities: ["Dhaka", "Chittagong", "Khulna", "Sylhet", "Rajshahi", "Barisal", "Rangpur"] },
+    "PH": { label: "Pumili ng Lungsod:", cities: ["Manila", "Quezon City", "Davao", "Caloocan", "Cebu", "Zamboanga", "Taguig"] },
+    "VN": { label: "Chọn thành phố:", cities: ["Hồ Chí Minh", "Hà Nội", "Hải Phòng", "Đà Nẵng", "Cần Thơ", "Biên Hòa", "Nha Trang"] },
+    "TH": { label: "เลือกเมือง:", cities: ["Bangkok", "Chiang Mai", "Nakhon Ratchasima", "Khon Kaen", "Hat Yai", "Udon Thani", "Pattaya"] },
+    "IR": { label: "شهر را انتخاب کنید:", cities: ["Tehran", "Mashhad", "Isfahan", "Karaj", "Shiraz", "Tabriz", "Qom"] },
+    "IQ": { label: "اختر المدينة:", cities: ["Baghdad", "Basra", "Mosul", "Erbil", "Sulaymaniyah", "Najaf", "Karbala"] },
+    "LB": { label: "اختر المدينة:", cities: ["Beirut", "Tripoli", "Sidon", "Tyre", "Zahle", "Byblos", "Baalbek"] },
+    "SY": { label: "اختر المدينة:", cities: ["Damascus", "Aleppo", "Homs", "Hama", "Latakia", "Deir ez-Zor", "Raqqa"] },
+    "OM": { label: "اختر المدينة:", cities: ["Muscat", "Salalah", "Sohar", "Nizwa", "Ibri", "Rustaq", "Sur"] },
+    "CA": { label: "Select City:", cities: ["Toronto", "Montreal", "Vancouver", "Calgary", "Ottawa", "Edmonton", "Winnipeg"] },
+    "BR": { label: "Selecionar cidade:", cities: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte", "Manaus"] },
+    "AR": { label: "Seleccionar ciudad:", cities: ["Buenos Aires", "Córdoba", "Rosario", "Mendoza", "La Plata", "San Miguel de Tucumán", "Mar del Plata"] },
+    "MX": { label: "Seleccionar ciudad:", cities: ["Ciudad de México", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "León", "Ciudad Juárez"] },
+    "CO": { label: "Seleccionar ciudad:", cities: ["Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena", "Cúcuta", "Bucaramanga"] },
+    "CL": { label: "Seleccionar ciudad:", cities: ["Santiago", "Valparaíso", "Concepción", "La Serena", "Antofagasta", "Temuco", "Rancagua"] },
+    "PE": { label: "Seleccionar ciudad:", cities: ["Lima", "Arequipa", "Trujillo", "Chiclayo", "Piura", "Iquitos", "Cusco"] },
+    "VE": { label: "Seleccionar ciudad:", cities: ["Caracas", "Maracaibo", "Valencia", "Barquisimeto", "Maracay", "Ciudad Guayana", "Barcelona"] },
+    "AU": { label: "Select City:", cities: ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast", "Canberra"] },
+};
+        window.onload = function() {
+            const session = localStorage.getItem('sgl_current_session');
+            if(!session) { window.location.href = "index.html"; return; }
+            const settings = JSON.parse(localStorage.getItem(`sgl_settings_${session}`));
+            if(!settings) { window.location.href = "setup.html"; return; }
+
+            tempUnit = settings.unit; userLang = settings.language.code;
+            applyTranslation(userLang);
+            document.getElementById('userDisplay').innerText = translations[userLang].userPrefix + session;
+            document.getElementById('countrySelect').value = settings.country.code;
+            buildRegionsList(settings.country.code);
+
+
+
+        }
+
+        function applyTranslation(l) {
+            const t = translations[l] || translations['en'];
+            document.getElementById('tr-side-title').innerText = t.sideTitle;
+            document.getElementById('tr-country-label').innerText = t.countryLabel;
+            document.getElementById('tr-welcome').innerText = t.welcome;
+            document.getElementById('tr-welcome-sub').innerText = t.welcomeSub;
+            document.getElementById('tr-humidity').innerText = t.humidity;
+            document.getElementById('tr-wind').innerText = t.wind;
+            document.getElementById('tr-visibility').innerText = t.visibility;
+            document.getElementById('tr-uv').innerText = t.uv;
+            document.getElementById('tr-forecast-title').innerText = t.forecast;
+            document.getElementById('tr-back-setup').innerText = t.backSetup;
+document.getElementById('tr-logout').innerText = t.logout;
+	            if(t.compareBtn) document.getElementById('tr-compare-btn').innerText = t.compareBtn;
+	            
+	            document.dir = l === 'ar' ? 'rtl' : 'ltr';
+        }
+
+        function buildRegionsList(code) {
+    const config = countryNamesDatabase[code];
+    document.getElementById('regionLabel').innerText = config.label;
+    const s = document.getElementById('regionSelect');
+    s.innerHTML = '<option value="">-- اختر --</option>';
+    config.cities.forEach(c => { const o = document.createElement('option'); o.value = `${c},${code}`; o.innerText = c; s.appendChild(o); });
+    document.getElementById('weatherDashboard').style.display = 'none';
+    document.getElementById('welcomeMessage').style.display = 'block';
+        }
+
+        function onCountryChange(c) { buildRegionsList(c); }
+
+
+        function toggleAlerts() {
+            isAlertOn = !isAlertOn;
+            const btn = document.getElementById('alertBtn');
+            const t = translations[userLang] || translations['en'];
+            btn.innerText = isAlertOn ? t.alertOn : t.alertOff;
+            btn.classList.toggle('active', isAlertOn);
+            if(isAlertOn) playSound();
+        }
+
+
+        function playSound() { document.getElementById('alertSound').play().catch(() => {}); }
+
+        async function getDashboardWeatherData(city) {
+            if(!city) return;
+            const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=3&lang=${userLang}`);
+            const data = await res.json();
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('weatherDashboard').style.display = 'block';
+ 
+            const c = data.current, l = data.location, t = translations[userLang] || translations['en'];
+            document.getElementById('detLocation').innerText = `${l.name}, ${l.country}`;
+            document.getElementById('detTime').innerText = t.updatePrefix + c.last_updated;
+            const temp = tempUnit === "C" ? c.temp_c : c.temp_f;
+            document.getElementById('detTemp').innerText = `${temp}°${tempUnit}`;
+            document.getElementById('detIcon').src = c.condition.icon;
+            document.getElementById('detCondition').innerText = c.condition.text;
+            document.getElementById('detHumidity').innerText = c.humidity + '%';
+            document.getElementById('detWind').innerText = c.wind_kph + t.windUnit;
+            document.getElementById('detVisibility').innerText = c.vis_km + t.visUnit;
+            document.getElementById('detUV').innerText = c.uv;
+
+            const container = document.getElementById('forecastContainer');
+            container.innerHTML = '';
+            data.forecast.forecastday.forEach(d => {
+                const dv = document.createElement('div'); dv.className = 'forecast-card';
+                const dt = tempUnit === "C" ? d.day.avgtemp_c : d.day.avgtemp_f;
+                dv.innerHTML = `<div class="day-name">${d.date}</div><img src="${d.day.condition.icon}"><div class="forecast-temp">${dt}°${tempUnit}</div>`;
+                container.appendChild(dv);
+            });
+
+            if(isAlertOn && ((lastCond && lastCond !== c.condition.text) || (lastTemp && lastTemp !== temp))) playSound();
+            lastTemp = temp; lastCond = c.condition.text;
+        }
+
+
+
+        function logoutSystem() {
+            localStorage.removeItem('sgl_current_session');
+            localStorage.removeItem('sgl_current_user');
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
