@@ -322,6 +322,25 @@ const translations = {
                 alert(t.alertSelect); return;
             }
             const settings = { language: selectedLanguageValue, country: selectedCountryValue, unit: selectedUnitValue };
+            async function logoutSystem() {
+    // 1. جلب اسم الجلسة الحالية
+    const session = localStorage.getItem('sgl_current_session');
+    
+    // 2. مسح بيانات المستخدم والجلسة من التخزين المحلي
+    if (session) {
+        localStorage.removeItem(`sgl_settings_${session}`);
+        localStorage.removeItem('sgl_current_session');
+        localStorage.removeItem('sgl_current_user');
+    }
+    
+    // 3. تسجيل الخروج من Supabase Auth
+    if (typeof supabaseClient !== 'undefined') {
+        await supabaseClient.auth.signOut();
+    }
+    
+    // 4. إعادة التوجيه لصفحة الدخول
+    window.location.href = "index.html";
+            }
             localStorage.setItem(`sgl_settings_${currentUserEmail}`, JSON.stringify(settings));
             window.location.href = 'weather.html';
         }
