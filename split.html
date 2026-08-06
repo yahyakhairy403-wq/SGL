@@ -495,6 +495,25 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         function logoutSystem() {
             localStorage.removeItem('sgl_current_session');
             localStorage.removeItem('sgl_current_user');
+            async function logoutSystem() {
+    // 1. جلب اسم الجلسة الحالية
+    const session = localStorage.getItem('sgl_current_session');
+    
+    // 2. مسح بيانات المستخدم والجلسة من التخزين المحلي
+    if (session) {
+        localStorage.removeItem(`sgl_settings_${session}`);
+        localStorage.removeItem('sgl_current_session');
+        localStorage.removeItem('sgl_current_user');
+    }
+    
+    // 3. تسجيل الخروج من Supabase Auth
+    if (typeof supabaseClient !== 'undefined') {
+        await supabaseClient.auth.signOut();
+    }
+    
+    // 4. إعادة التوجيه لصفحة الدخول
+    window.location.href = "index.html";
+            }
             window.location.href = "index.html";
         }
     </script>
