@@ -193,6 +193,10 @@
     <footer id="tr-footer">©2026 Developer Yahia Khairy</footer>
 
     <script>
+          const SUPABASE_URL = 'https://euhmytkcmwcuynbgwhwg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1aG15dGtjbXdjdXluYmd3aHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5MzU5NTEsImV4cCI6MjEwMTUxMTk1MX0.7Rh4aEnXnlvvefztcPdTeq4BhoQqoHjkNdvSKW9ftQc';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         const apiKey = "45ca785dde6c48f7846114104263107";
         let tempUnit = "C", userLang = "ar";
         let city1Data = null, city2Data = null;
